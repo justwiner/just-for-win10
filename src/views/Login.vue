@@ -1,0 +1,162 @@
+<template>
+    <section
+    ref="login"
+    class="login">
+        <section
+        class="login-bg"
+        :style="`background-image: url('${bgUrl}');${showLogin ? 'animation: blurAni .3s forwards;' : ''}`"></section>
+        <section
+        v-show="!showLogin"
+        class="current opacityAni">
+            <p class="current-time">{{time}}</p>
+            <p class="current-date">{{date}}，{{week}}</p>
+        </section>
+        <section
+        v-if="showLogin"
+        class="login-content">
+            <section>
+                <section class="login-content-avator">
+                    <img :src="avator"/>
+                </section>
+                <section class="login-content-name">Justwiner</section>
+                <section class="login-content-but" @click="login">登录</section>
+            </section>
+        </section>
+    </section>
+</template>
+
+<script>
+import LoginService from '@/service/Login'
+import {getWeek} from '@/lib/date'
+import {fullScreenFun, fullScreenable} from '@/lib/tools'
+import moment from 'moment'
+let intervalId = null
+
+export default {
+    name: 'login',
+    data () {
+        let loginService = new LoginService()
+        return {
+            loginService,
+            bgUrl: loginService.getRandomBgUrl(),
+            avator: require('../assets/me.jpg'),
+            time: '00:00:00',
+            date: '01-01',
+            week: '星期一',
+            showLogin: false
+        }
+    },
+    mounted () {
+        this.setTime()
+        intervalId = setInterval(() => {
+            this.setTime()
+        }, 500)
+        // document.addEventListener('keydown', this.onKeyDown)
+        document.addEventListener('mouseup', this.onKeyDown)
+        // fullScreenFun()
+    },
+    beforeDestroy () {
+        intervalId && clearInterval(intervalId)
+        document.removeEventListener('keydown', this.onKeyDown)
+        document.removeEventListener('mouseup', this.onKeyDown)
+    },
+    methods: {
+        onKeyDown () {
+            this.showLogin = true
+        },
+        setTime () {
+            const current = moment()
+            this.time = current.format('H:mm:s')
+            this.date = current.format('MM月DD日')
+            this.week = getWeek(current)
+        },
+        login () {
+            this.$router.push({
+                name: 'Home'
+            })
+        }
+    }
+}
+</script>
+
+<style lang='scss'>
+.login {
+    height: 100%;
+    position: relative;
+    animation: loginFrame .3s forwards;
+    &-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-size: 100% 100%;
+        z-index: -1;
+    }
+}
+.login-content {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    color: #ffff;
+    display: flex;
+    justify-content: center;
+    margin-top: 10%;
+    animation: opacityAni .5s forwards;
+    &-avator, &-name, &-but {
+        text-align: center;
+        width: 100%;
+        text-align: center;
+    }
+    &-avator {
+        width: 100%;
+        margin-bottom: 1rem;
+        img {
+            width: 12rem;
+            height: 12rem;
+            border-radius: 50%;
+            background: rgba(71, 146, 226, 0.6);
+        }
+    }
+    &-name {
+        font-size: 5rem;
+    }
+    &-but {
+        width: 9rem;
+        height: 2.5rem;
+        line-height: 2.5rem;
+        background: rgba(71, 146, 226, 0.6);
+        border: rgba(71, 146, 226, 0.6) solid 2px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        &:hover {
+            border-color: lightgray;
+        }
+    }
+}
+.current {
+    position: absolute;
+    left: 40px;
+    bottom: 100px;
+    color: white;
+    &-time {
+        font-size: 5rem;
+    }
+    &-date {
+        font-size: 3rem;
+    }
+}
+
+@keyframes loginFrame {
+    0% {
+        background: rgba($color: #000000, $alpha: .5);
+    }
+    100% {
+        background: transparent
+    }
+}
+</style>

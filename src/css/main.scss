@@ -8,7 +8,19 @@ html, body {
 
 * {
     user-select: none;
-    transition: opacity .3s, height .3s, width .3s, top .3s, left .3s, right .3s, bottom .3s, border .3s;
+    transition: opacity .3s,
+                height .3s,
+                width .3s,
+                top .3s,
+                left .3s,
+                right .3s,
+                bottom .3s, 
+                border .3s,
+                color .3s;
+}
+
+input {
+    outline: none;
 }
 
 .opacityAni {
@@ -17,6 +29,15 @@ html, body {
 
 .blurAni {
     animation: opacityAni .3s forwards;
+}
+
+.layer {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    background-color: transparent;
 }
 
 /*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
@@ -58,5 +79,41 @@ html, body {
     }
     100% {
         filter: blur(5px);
+    }
+}
+
+@keyframes comeInRight {
+    0% {
+        transform: translateX(100%);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+@keyframes comeOutRight {
+    0% {
+        transform: translateX(0%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+@keyframes comeInBottom {
+    0% {
+        transform: translateY(100%);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+@keyframes comeOutBottom {
+    0% {
+        transform: translateY(0%);
+    }
+    100% {
+        transform: translateY(100%);
     }
 }

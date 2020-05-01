@@ -29,8 +29,8 @@
 import LoginService from '@/service/Login'
 import {getWeek} from '@/lib/date'
 import {fullScreenFun, fullScreenable} from '@/lib/tools'
+import {mapState} from 'vuex'
 import moment from 'moment'
-let intervalId = null
 
 export default {
     name: 'login',
@@ -46,17 +46,25 @@ export default {
             showLogin: false
         }
     },
+    computed: {
+        ...mapState({
+            currentTime: state => state.currentTime
+        })
+    },
+    watch: {
+        currentTime: {
+            immediate: true,
+            handler (time) {
+                this.setTime(time)
+            }
+        }
+    },
     mounted () {
-        this.setTime()
-        intervalId = setInterval(() => {
-            this.setTime()
-        }, 500)
         // document.addEventListener('keydown', this.onKeyDown)
         document.addEventListener('mouseup', this.onKeyDown)
         // fullScreenFun()
     },
     beforeDestroy () {
-        intervalId && clearInterval(intervalId)
         document.removeEventListener('keydown', this.onKeyDown)
         document.removeEventListener('mouseup', this.onKeyDown)
     },
@@ -64,8 +72,8 @@ export default {
         onKeyDown () {
             this.showLogin = true
         },
-        setTime () {
-            const current = moment()
+        setTime (time) {
+            const current = moment(time)
             this.time = current.format('H:mm:s')
             this.date = current.format('MM月DD日')
             this.week = getWeek(current)

@@ -1,5 +1,5 @@
 <template>
-    <section class="msg-box" v-if="visible" @click="close">
+    <section class="layer" v-if="visible" @click="close">
         <section ref="msgContent" class="msg-content" @click.stop="() => {}">
             <section v-if="msgList.length > 0"></section>
             <section ref="msgEmpty" class="msg-empty" v-else>没有新通知</section>
@@ -57,14 +57,6 @@ export default {
 </script>
 
 <style lang="scss">
-.msg-box {
-    position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    background-color: transparent;
-}
 .msg-empty {
     color: #A8A8AA;
     height: 100%;
@@ -78,26 +70,10 @@ export default {
 .msg-content {
     width: 400px;
     height: calc(100% - 40px);
-    background-color: rgba(33, 30, 32, .9);
+    background-color: rgba(33, 30, 32, 1);
     position: absolute;
     right: 0;
     top: 0;
     animation: comeInRight .3s forwards;
-}
-@keyframes comeInRight {
-    0% {
-        transform: translateX(100%);
-    }
-    100% {
-        transform: translateX(0);
-    }
-}
-@keyframes comeOutRight {
-    0% {
-        transform: translateX(0%);
-    }
-    100% {
-        transform: translateX(100%);
-    }
 }
 </style>

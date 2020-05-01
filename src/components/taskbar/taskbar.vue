@@ -1,7 +1,7 @@
 <template>
     <section class="task-bar">
         <section class="task-bar-windows task-bar-icon task-item"/>
-        <section class="task-bar-search">
+        <section class="task-bar-search" @click="searhFocus">
             <section class="task-bar-search-prefix task-bar-icon"/>
             <input class="task-bar-search-textarea" type="text"/>
         </section>
@@ -10,52 +10,73 @@
 
         </section>
         <section class="task-tip">
-            <section class="task-tip-date task-item">
+            <section class="task-tip-date task-item" @click="changeBox('dateBoxVisible', true)">
                 <section>{{time}}</section>
                 <section>{{date}}</section>
             </section>
-            <section class="task-tip-msg task-item task-bar-icon" @click="openMsgBox"></section>
+            <section class="task-tip-msg task-item task-bar-icon" @click="changeBox('msgBoxVisible', true)"></section>
         </section>
         <MsgBox
-        @close='closeMsgBox'
+        ref="msgBox"
+        @close="changeBox('msgBoxVisible', false)"
         :visible='msgBoxVisible'/>
+        <DateBox
+        ref="dateBox"
+        @close="changeBox('dateBoxVisible', false)"
+        :visible='dateBoxVisible'/>
     </section>
 </template>
 
 <script>
 import MsgBox from './msgBox'
+import DateBox from './dateBox'
 import moment from 'moment'
-let intervalId = null
+import {mapState} from 'vuex'
 
 export default {
     name: 'task-bar',
     components: {
-        MsgBox
+        MsgBox,
+        DateBox
+    },
+    computed: {
+        ...mapState({
+            currentTime: state => state.currentTime
+        })
     },
     data () {
         return {
             time: '',
             date: '',
-            msgBoxVisible: false
+            msgBoxVisible: false,
+            dateBoxVisible: false
         }
     },
-    created () {
-        this.getDateTime()
-        intervalId = setInterval(this.getDateTime, 500)
-    },
-    beforeDestroy () {
-        intervalId && clearInterval(intervalId)
+    watch: {
+        msgBoxVisible (val) {
+            if (val && this.dateBoxVisible) this.$refs.dateBox.close()
+        },
+        dateBoxVisible (val) {
+            if (val && this.msgBoxVisible) this.$refs.msgBox.close()
+        },
+        currentTime: {
+            immediate: true,
+            handler (time) {
+                this.getDateTime(time)
+            }
+        }
     },
     methods: {
-        getDateTime () {
-            this.time = moment().format('HH:mm')
-            this.date = moment().format('YYYY/M/D')
+        getDateTime (time) {
+            this.time = moment(time).format('HH:mm')
+            this.date = moment(time).format('YYYY/M/D')
         },
-        openMsgBox () {
-            this.msgBoxVisible = true
+        changeBox (key, flag) {
+            this[key] = flag
         },
-        closeMsgBox () {
-            this.msgBoxVisible = false
+        searhFocus () {
+            if (this.dateBoxVisible) this.$refs.dateBox.close()
+            if (this.msgBoxVisible) this.$refs.msgBox.close()
         }
     }
 }
@@ -76,6 +97,7 @@ $tip-width: 130px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    z-index: 1000;
     &-icon {
         width: $task-height;
         height: $task-height;

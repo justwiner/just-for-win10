@@ -9,6 +9,7 @@ export default new Vuex.Store({
     msgList: [],
     currentTime: '',
     app: appData,
+    runingApp: [],
   },
   mutations: {
     updateTime(state, time) {
@@ -16,6 +17,9 @@ export default new Vuex.Store({
     },
     updateApps(state, data) {
       state.app = data;
+    },
+    updateRuningApp(state, data) {
+      state.runingApp = data;
     },
   },
   actions: {

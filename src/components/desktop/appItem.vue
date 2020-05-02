@@ -1,6 +1,7 @@
 <template>
     <section
     @click="select"
+    @dblclick="runApp"
     :class="[
     active ? 'app-item-active' : ''
     ]"
@@ -41,6 +42,9 @@ export default {
         },
         selectElse () {
             this.$emit('click', '')
+        },
+        runApp () {
+            this.$emit('run', this.app, this.index)
         }
     }
 }

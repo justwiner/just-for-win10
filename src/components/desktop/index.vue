@@ -2,25 +2,34 @@
     <section class="desktop">
         <draggable v-model="apps" draggable=".app-drag">
             <AppItem
-            @click='itemClick(index)'
+            @click='itemClick'
+            @run='runApp'
             :index='index'
             :active='active === index'
             :key="index"
             v-for="(app, index) in apps"
             :app='app'/>
         </draggable>
+        <AppContainerIframe
+        v-for="(app, index) in runingApp"
+        :key="index"
+        :app='app'
+        />
     </section>
 </template>
 
 <script>
 import AppItem from './appItem'
 import draggable from 'vuedraggable'
+import AppContainerIframe from '@/components/appContainer/iframe'
+import {mapState} from 'vuex'
 
 export default {
     name: 'desktop',
     components: {
         AppItem,
-        draggable
+        draggable,
+        AppContainerIframe
     },
     computed: {
         apps: {
@@ -30,7 +39,10 @@ export default {
             set (value) {
                 this.$store.commit('updateApps', value)
             }
-        }
+        },
+        ...mapState({
+            runingApp: state => state.runingApp
+        })
     },
     data () {
         return {
@@ -40,6 +52,11 @@ export default {
     methods: {
         itemClick (active) {
             this.active = active
+        },
+        runApp (app, index) {
+            let runingApp = this.runingApp
+            runingApp.push(app)
+            this.$store.commit('updateRuningApp', runingApp)
         }
     }
 }

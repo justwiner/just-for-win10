@@ -38,6 +38,7 @@ input {
     bottom: 0;
     left: 0;
     background-color: transparent;
+    z-index: 2000;
 }
 
 /*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/

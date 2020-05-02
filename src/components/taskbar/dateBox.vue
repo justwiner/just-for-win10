@@ -16,7 +16,7 @@
                     <input type="text" placeholder="添加事件或提醒"/>
                 </section>
                 <section class="date-todo-list">
-                    todo模块暂未开发，表示并没有什么用
+                    todo模块暂未开发
                 </section>
             </section>
             <section class="date-todo-hiden" @click="changeTodoVisible">

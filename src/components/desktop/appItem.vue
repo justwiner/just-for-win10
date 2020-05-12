@@ -54,12 +54,7 @@ export default {
             this.$emit('click', '')
         },
         runApp () {
-            if (appService.checkAppRun(this.runingApp, this.app)) {
-                this.bus.$emit('activeAppFn', this.app)
-            } else {
-                this.$emit('run', this.app, this.index)
-            }
-            this.$store.commit('updateActiveApp', this.app)
+            this.$emit('run', this.app)
         }
     }
 }

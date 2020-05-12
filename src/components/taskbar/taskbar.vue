@@ -1,6 +1,8 @@
 <template>
     <section class="task-bar">
-        <section class="task-bar-windows task-bar-icon task-item"/>
+        <section
+        @click="changeBox('appBoxVisible', true)"
+        class="task-bar-windows task-bar-icon task-item"/>
         <section class="task-bar-search" @click="searhFocus">
             <section class="task-bar-search-prefix task-bar-icon"/>
             <input class="task-bar-search-textarea" type="text"/>
@@ -33,12 +35,17 @@
         ref="dateBox"
         @close="changeBox('dateBoxVisible', false)"
         :visible='dateBoxVisible'/>
+        <AppBox
+        ref="appBox"
+        @close="changeBox('appBoxVisible', false)"
+        :visible='appBoxVisible'/>
     </section>
 </template>
 
 <script>
 import MsgBox from './msgBox'
 import DateBox from './dateBox'
+import AppBox from './appBox'
 import moment from 'moment'
 import {mapState} from 'vuex'
 
@@ -46,7 +53,8 @@ export default {
     name: 'task-bar',
     components: {
         MsgBox,
-        DateBox
+        DateBox,
+        AppBox
     },
     computed: {
         ...mapState({
@@ -60,15 +68,22 @@ export default {
             time: '',
             date: '',
             msgBoxVisible: false,
-            dateBoxVisible: false
+            dateBoxVisible: false,
+            appBoxVisible: false
         }
     },
     watch: {
         msgBoxVisible (val) {
             if (val && this.dateBoxVisible) this.$refs.dateBox.close()
+            if (val && this.appBoxVisible) this.$refs.appBox.close()
         },
         dateBoxVisible (val) {
             if (val && this.msgBoxVisible) this.$refs.msgBox.close()
+            if (val && this.appBoxVisible) this.$refs.appBox.close()
+        },
+        appBoxVisible (val) {
+            if (val && this.msgBoxVisible) this.$refs.msgBox.close()
+            if (val && this.dateBoxVisible) this.$refs.dateBox.close()
         },
         currentTime: {
             immediate: true,
@@ -169,6 +184,7 @@ $tip-width: 130px;
         display: flex;
         align-items: center;
         justify-content: flex-start;
+        overflow: hidden;
         &-item {
             height: $task-height;
             width: $task-height + 20px;

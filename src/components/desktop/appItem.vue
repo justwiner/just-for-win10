@@ -20,6 +20,11 @@
 </template>
 
 <script>
+import AppService from '@/service/AppService'
+import {mapState} from 'vuex'
+
+const appService = new AppService()
+
 export default {
     name: 'app-item',
     props: {
@@ -36,6 +41,11 @@ export default {
             type: Number
         }
     },
+    computed: {
+        ...mapState({
+            runingApp: state => state.runingApp
+        })
+    },
     methods: {
         select () {
             this.$emit('click', this.index)
@@ -44,7 +54,12 @@ export default {
             this.$emit('click', '')
         },
         runApp () {
-            this.$emit('run', this.app, this.index)
+            if (appService.checkAppRun(this.runingApp, this.app)) {
+                this.bus.$emit('activeAppFn', this.app)
+            } else {
+                this.$emit('run', this.app, this.index)
+            }
+            this.$store.commit('updateActiveApp', this.app)
         }
     }
 }

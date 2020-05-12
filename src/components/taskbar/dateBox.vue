@@ -126,7 +126,7 @@ export default {
     background-color: rgb(44, 45, 46);
     position: absolute;
     right: 0;
-    bottom: 40px;
+    bottom: 0;
     animation: comeInBottom .3s forwards;
     padding: 1% 1% 3% 1%;
     &-date {

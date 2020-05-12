@@ -14,7 +14,7 @@
     </section>
     <section
     @click="selectElse"
-    class="app-temp app-drag" v-else>
+    class="app-temp app-drag" draggable="false" v-else>
 
     </section>
 </template>
@@ -63,6 +63,7 @@ $app-height: 5.5vw;
     width: $app-width;
     border: 1px solid transparent;
     padding: 5px;
+    z-index: 5;
     &:hover {
         border-color: lightgray;
         background-color: rgba($color: #ffffff, $alpha: .3);
@@ -93,5 +94,6 @@ $app-height: 5.5vw;
 .app-temp {
     height: calc(#{$app-height} + 20px);
     width: calc(#{$app-width} + 20px);
+    z-index: 1;
 }
 </style>

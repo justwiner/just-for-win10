@@ -2,16 +2,16 @@
     <section
     v-drag
     @click="appClick"
-    style="z-index: 1000"
+    :style="`z-index: 1000;`"
     class="app-iframe">
         <section class="app-iframe-opt">
             <section class="app-iframe-opt-left">
                 {{app.name}}
             </section>
             <section class="app-iframe-opt-right">
-                <i @click="minus" title="最小化" class="fa fa-window-minimize"></i>
-                <i @click="maxus" title="最大化" :class="[ifMaxus ? 'fa-window-restore' : 'fa-window-maximize']" class="fa"></i>
-                <i @click="close" title="关闭" class="fa fa-window-close"></i>
+                <i @click.stop="minus" @mousedown.stop="() => {}" title="最小化" class="fa fa-window-minimize"></i>
+                <i @click="maxus" @mousedown.stop="() => {}" title="最大化" :class="[ifMaxus ? 'fa-window-restore' : 'fa-window-maximize']" class="fa"></i>
+                <i @click.stop="close" title="关闭" class="fa fa-window-close"></i>
             </section>
         </section>
         <iframe
@@ -24,38 +24,34 @@
         :src="app.url">
             <p>Your browser does not support iframes.</p>
         </iframe>
+        <section class="sizeChange-layer" v-show="sizeChangeLayer"></section>
+        <component
+        class="app-content"
+        @mousedown.stop="() => {}"
+        v-if="app.type === 'app'"
+        v-bind:is="app.component"></component>
+
+        <!-- app应用窗口大小调整触发按钮 8个方向 -->
+        <section @mousedown.stop="(e) => {sizeChangeS(e, 'top')}" class='app-frame-sizeBut sizeBut-top'></section>
+        <section @mousedown.stop="(e) => {sizeChangeW(e, 'right')}" class='app-frame-sizeBut sizeBut-right'></section>
+        <section @mousedown.stop="(e) => {sizeChangeS(e, 'bottom')}" class='app-frame-sizeBut sizeBut-bottom'></section>
+        <section @mousedown.stop="(e) => {sizeChangeW(e, 'left')}" class='app-frame-sizeBut sizeBut-left'></section>
+        <section @mousedown.stop="(e) => {sizeChangeSE(e, 'lt')}" class='app-frame-sizeBut sizeBut-top-left'></section>
+        <section @mousedown.stop="(e) => {sizeChangeNE(e, 'rt')}" class='app-frame-sizeBut sizeBut-top-right'></section>
+        <section @mousedown.stop="(e) => {sizeChangeNE(e, 'lb')}" class='app-frame-sizeBut sizeBut-bottom-left'></section>
+        <section @mousedown.stop="(e) => {sizeChangeSE(e, 'rb')}" class='app-frame-sizeBut sizeBut-bottom-right'></section>
     </section>
 </template>
 
 <script>
+import Calculator from '@/components/calculator/index'
+import {TweenMax, Circ} from 'gsap'
+import {mouseMove} from '@/lib/helper-dom'
+
 export default {
     name: 'app-container-iframe',
-    directives: {
-        drag: {
-            // 指令的定义
-            bind: function (el, binding, vnode) {
-                let oDiv = el;   //获取当前元素
-                oDiv.onmousedown = (e) => {
-                    //算出鼠标相对元素的位置
-                    let disX = e.clientX - oDiv.offsetLeft;
-                    let disY = e.clientY - oDiv.offsetTop;
-                    document.onmousemove = (e)=>{
-                        //用鼠标的位置减去鼠标相对元素的位置，得到元素的位置
-                        let left = e.clientX - disX;    
-                        let top = e.clientY - disY;
-                
-                        //移动当前元素
-                        oDiv.style.left = left + 'px';
-                        oDiv.style.top = top + 'px';
-                        vnode.context.prePosition = [left, top]
-                    };
-                    document.onmouseup = (e) => {
-                        document.onmousemove = null;
-                        document.onmouseup = null;
-                    };
-                };
-            }
-        }
+    components: {
+        Calculator
     },
     props: {
         app: {
@@ -66,7 +62,9 @@ export default {
     data () {
         return {
             ifMaxus: false,
-            prePosition: [0, 0]
+            prePosition: [0, 0],
+            preSize: this.app.defaultSize,
+            sizeChangeLayer: false
         }
     },
     mounted () {
@@ -75,7 +73,17 @@ export default {
     methods: {
         init () {
             this.$nextTick(() => {
-                const body = document.querySelector("body");
+                let body = document.querySelector("body");
+                if (this.app.defaultSize) {
+                    this.$el.style.left = (document.body.offsetWidth/100) * (100 - parseInt(this.app.defaultSize[0]))/2 + 'px'
+                    this.$el.style.top = ((document.body.offsetHeight - 40)/100) * (100 - parseInt(this.app.defaultSize[1]))/2 + 'px'
+                    this.$el.style.width = this.app.defaultSize[0]
+                    this.$el.style.height = this.app.defaultSize[1]
+                    this.prePosition = [
+                        parseInt(this.$el.style.left),
+                        parseInt(this.$el.style.top)
+                    ]
+                }
                 if (body.append) {
                     body.append(this.$el);
                 } else {
@@ -87,23 +95,76 @@ export default {
         minus () {
             this.$el.className = 'app-iframe app-hidden'
         },
+        parseAnimationObj (obj) {
+            const containerWidth = document.body.offsetWidth
+            const containerHeight = document.body.offsetHeight - 40
+            
+            for (let key in obj) {
+                obj[key] = this.parseNum(
+                    obj[key],
+                    ['left', 'width'].indexOf(key) > -1 ? containerWidth : containerHeight
+                )
+            }
+        },
+        parseNum (str = '', total) {
+            if (str instanceof Number) return str
+            else str = str.toString()
+            if (str.indexOf('%') > -1) return (total/100) * parseInt(str)
+            else return parseInt(str)
+        },
         maxus () {
             this.ifMaxus = !this.ifMaxus
-            if (this.ifMaxus) {
-                this.$el.className = 'app-iframe app-maxus'
-                this.$el.style.left = '0'
-                this.$el.style.top = '0'
-            } else {
-                this.$el.className = 'app-iframe'
-                this.$el.style.left = this.prePosition[0] + 'px'
-                this.$el.style.top = this.prePosition[1] + 'px'
+            let curLeft = this.$el.style.left
+            let curTop = this.$el.style.top
+            let curWidth = this.$el.style.width || this.preSize[0]
+            let curHeight = this.$el.style.height || this.preSize[1]
+            let animationObj = {
+                left: curLeft,
+                top: curTop,
+                width: curWidth,
+                height: curHeight
             }
+            this.parseAnimationObj(animationObj)
+            let animationEnd = {}
+            if (this.ifMaxus) {
+                animationEnd = { 
+                    left: 0,
+                    top: 0,
+                    width: '100%',
+                    height: '100%'
+                }
+            } else {
+                animationEnd = { 
+                    left: this.prePosition[0],
+                    top: this.prePosition[1],
+                    width: this.preSize[0],
+                    height: this.preSize[1]
+                }
+            }
+            this.parseAnimationObj(animationEnd)
+            TweenMax.fromTo(this.$el, .2, animationObj, {...animationEnd, ease: Circ.easeIn});
         },
         appClick () {
             this.setActive()
         },
         close () {
-
+            const containerWidth = document.body.offsetWidth
+            const containerHeight = document.body.offsetHeight - 40
+            const left = this.parseNum(this.$el.style.left, containerWidth)
+                        + this.parseNum(this.$el.style.width, containerWidth)/2
+            const top = this.parseNum(this.$el.style.top, containerHeight) 
+                        + this.parseNum(this.$el.style.height, containerHeight)/2
+            TweenMax.to(this.$el, .2, {
+                height: 0,
+                width: 0,
+                left,
+                top,
+                opacity: 0,
+                ease: Circ.easeIn
+            });
+            setTimeout(() => {
+                this.$emit('closeApp', this.app)
+            }, 300)
         },
         setActive () {
             let appIframes = document.querySelectorAll('.app-iframe')
@@ -126,28 +187,169 @@ export default {
                     app.style.zIndex = +app.style.zIndex - diff
                 }
             }
+        },
+        /**
+         * app 窗口大小变化
+         */
+        /**
+         * 上下
+         */
+        sizeChangeS(e, type) {
+            const disY = this.$el.offsetTop;
+            const sourceHeight = this.$el.offsetHeight;
+            this.layerHelper(true)
+            mouseMove((e) => {
+                const changeHeight = disY - e.clientY;
+                let top = this.parseNum(this.$el.style.top, document.body.offsetHeight - 40)
+                let height = sourceHeight
+                if (type === 'top') {
+                    top = e.clientY
+                    height = sourceHeight + changeHeight
+                } else if (type === 'bottom') {
+                    height = -changeHeight
+                }
+                if (height < 200) return
+                this.$el.style.top = top + 'px'
+                this.$el.style.height = height + 'px'
+            }, () => {
+                this.layerHelper(false)
+            })
+        },
+        /**
+         * 左右
+         */
+        sizeChangeW(e, type) {
+            const disX = this.$el.offsetLeft;
+            const sourceWidth = this.$el.offsetWidth;
+            this.layerHelper(true)
+            mouseMove((e) => {
+                const changeWidth = disX - e.clientX;
+                let left = this.parseNum(this.$el.style.left, document.body.offsetWidth)
+                let width = sourceWidth
+                if (type === 'left') {
+                    left = e.clientX
+                    width = sourceWidth + changeWidth
+                } else if (type === 'right') {
+                    width = -changeWidth
+                }
+                if (width < 200) return
+                this.$el.style.left = left + 'px'
+                this.$el.style.width = width + 'px'
+            }, () => {
+                this.layerHelper(false)
+            })
+        },
+        /**
+         * 
+         * 顺时针45°
+         */
+        sizeChangeNE(e, type) {
+            const disX = this.$el.offsetLeft;
+            const disY = this.$el.offsetTop;
+            const sourceWidth = this.$el.offsetWidth;
+            const sourceHeight = this.$el.offsetHeight;
+            this.layerHelper(true)
+            mouseMove((e) => {
+                const changeWidth = disX - e.clientX;
+                const changeHeight = disY - e.clientY;
+                let left = this.parseNum(this.$el.style.left, document.body.offsetWidth)
+                let width = sourceWidth
+                let top = this.parseNum(this.$el.style.top, document.body.offsetHeight - 40)
+                let height = sourceHeight
+                if (type === 'rt') {
+                    height = sourceHeight + changeHeight
+                    width = -changeWidth
+                    top = e.clientY
+                } else if (type === 'lb') {
+                    height = -changeHeight
+                    width = sourceWidth + changeWidth
+                    left = e.clientX
+                }
+                if (width <= 200) width = 200
+                if (height <= 200) height = 200
+                if (width > 200) {
+                    this.$el.style.left = left + 'px'
+                }
+                if (height > 200) {
+                    this.$el.style.top = top + 'px'
+                }
+                this.$el.style.width = width + 'px'
+                this.$el.style.height = height + 'px'
+            }, () => {
+                this.layerHelper(false)
+            })
+        },
+        /**
+         * 逆时针45°
+         */
+        sizeChangeSE(e, type) {
+            const disX = this.$el.offsetLeft;
+            const disY = this.$el.offsetTop;
+            const sourceWidth = this.$el.offsetWidth;
+            const sourceHeight = this.$el.offsetHeight;
+            this.layerHelper(true)
+            mouseMove((e) => {
+                const changeWidth = disX - e.clientX;
+                const changeHeight = disY - e.clientY;
+                let left = this.parseNum(this.$el.style.left, document.body.offsetWidth)
+                let width = sourceWidth
+                let top = this.parseNum(this.$el.style.top, document.body.offsetHeight - 40)
+                let height = sourceHeight
+                if (type === 'lt') {
+                    height = sourceHeight + changeHeight
+                    width = sourceWidth + changeWidth
+                    top = e.clientY
+                    left = e.clientX
+                } else if (type === 'rb') {
+                    height = -changeHeight
+                    width = -changeWidth
+                }
+                if (width <= 200) width = 200
+                if (height <= 200) height = 200
+                if (width > 200) {
+                    this.$el.style.left = left + 'px'
+                }
+                if (height > 200) {
+                    this.$el.style.top = top + 'px'
+                }
+                this.$el.style.width = width + 'px'
+                this.$el.style.height = height + 'px'
+            }, () => {
+                this.layerHelper(false)
+            })
+        },
+        /**
+         * app 窗口尺寸位置变化时
+         * 防止app内部内容捕获到mousemove事件
+         * 增加模态框
+         */
+        layerHelper (flag) {
+            this.sizeChangeLayer = flag
         }
     }
 }
 </script>
 
 <style lang="scss">
+$sizeButWidth: 10px;
+$menuBarHeight: 30px;
 .app-iframe {
     position: absolute;
-    top: 25%;
-    left: 25%;
+    top: 0;
+    left: 0;
     bottom: 0;
     right: 0;
     height: 50%;
     width: 50%;
     box-shadow: 0 0 5px #000000;
-    transition: height .3s,
-                width .3s,
+    background: rgba($color: #ffffff, $alpha: .6);
+    transition: height 0s,
+                width 0s,
                 border .3s,
                 color .3s;
     &-opt {
         width: 100%;
-        height: 30px;
+        height: $menuBarHeight;
         background-image: linear-gradient(45deg, #0081ff, #1cbbb4);
         color: #ffffff;
         display: flex;
@@ -159,13 +361,16 @@ export default {
             font-size: .9rem;
         }
         &-right {
-            width: 60px;
+            width: 100px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            height: 100%;
             i {
                 cursor: pointer;
                 color: lightgrey;
+                line-height: 100%;
+                padding: 0 10px;
                 &:hover {
                     color: white;
                 }
@@ -183,5 +388,77 @@ export default {
 .app-maxus {
     height: calc(100% - 40px);
     width: 100%;
+}
+.app-frame-sizeBut {
+    position: absolute;
+    opacity: 0;
+}
+.sizeBut-top {
+    top: 0;
+    left: $sizeButWidth;
+    width: calc(100% - #{$sizeButWidth} * 2);
+    height: 2px;
+    cursor: s-resize;
+}
+.sizeBut-right {
+    right: 0;
+    top: $sizeButWidth;
+    width: 2px;
+    height: calc(100% - #{$sizeButWidth} * 2);
+    cursor: w-resize;
+}
+.sizeBut-bottom {
+    bottom: 0;
+    left: $sizeButWidth;
+    width: calc(100% - #{$sizeButWidth} * 2);
+    height: 2px;
+    cursor: s-resize;
+}
+.sizeBut-left {
+    top: $sizeButWidth;
+    left: 0;
+    width: 2px;
+    height: calc(100% - #{$sizeButWidth} * 2);
+    cursor: w-resize;
+}
+.sizeBut-top-left {
+    top: 0;
+    left: 0;
+    width: $sizeButWidth;
+    height: $sizeButWidth;
+    cursor: se-resize;
+}
+.sizeBut-top-right {
+    top: 0;
+    right: 0;
+    width: $sizeButWidth;
+    height: $sizeButWidth;
+    cursor: ne-resize;
+}
+.sizeBut-bottom-left {
+    bottom: 0;
+    left: 0;
+    width: $sizeButWidth;
+    height: $sizeButWidth;
+    cursor: ne-resize;
+}
+.sizeBut-bottom-right {
+    bottom: 0;
+    right: 0;
+    width: $sizeButWidth;
+    height: $sizeButWidth;
+    cursor: se-resize;
+}
+.app-content {
+    width: 100%;
+    height: calc(100% - 30px);
+}
+.sizeChange-layer {
+    position: absolute;
+    top: $menuBarHeight;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: transparent;
 }
 </style>

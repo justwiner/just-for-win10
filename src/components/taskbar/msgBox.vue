@@ -69,7 +69,7 @@ export default {
 }
 .msg-content {
     width: 400px;
-    height: calc(100% - 40px);
+    height: calc(100%);
     background-color: rgba(33, 30, 32, 1);
     position: absolute;
     right: 0;

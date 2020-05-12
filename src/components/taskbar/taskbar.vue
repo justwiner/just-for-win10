@@ -41,7 +41,8 @@ export default {
     },
     computed: {
         ...mapState({
-            currentTime: state => state.currentTime
+            currentTime: state => state.currentTime,
+            runingApp: state => state.runingApp
         })
     },
     data () {
@@ -97,7 +98,7 @@ $tip-width: 130px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    z-index: 1000;
+    z-index: 5000;
     &-icon {
         width: $task-height;
         height: $task-height;
@@ -107,7 +108,6 @@ $tip-width: 130px;
     }
     &-windows {
         background-image: url('../../assets/icon/windows.svg');
-        margin-left: $windows-left;
     }
     &-search {
         height: auto;
@@ -117,7 +117,7 @@ $tip-width: 130px;
         background: white;
         position: absolute;
         bottom: 0;
-        left: $task-height + $windows-left;
+        left: $task-height;
         &-prefix {
             background-image: url('../../assets/icon/search.svg');
             position: absolute;

@@ -1,6 +1,11 @@
 <template>
     <section class="desktop">
-        <draggable v-model="apps" draggable=".app-drag">
+        <draggable
+        class="desktop-draggable"
+        v-model="apps"
+        draggable=".app-drag"
+        @start='dragStart'
+        @end='dragEnd'>
             <AppItem
             @click='itemClick'
             @run='runApp'
@@ -9,10 +14,12 @@
             :key="index"
             v-for="(app, index) in apps"
             :app='app'/>
+            <div class="desktop-draggable-layer" v-if="!draging"></div>
         </draggable>
         <AppContainerIframe
-        v-for="(app, index) in runingApp"
-        :key="index"
+        @closeApp='closeApp'
+        v-for="app in runingApp"
+        :key="app.id"
         :app='app'
         />
     </section>
@@ -46,7 +53,8 @@ export default {
     },
     data () {
         return {
-            active: ''
+            active: '',
+            draging: false
         }
     },
     methods: {
@@ -54,9 +62,22 @@ export default {
             this.active = active
         },
         runApp (app, index) {
-            let runingApp = this.runingApp
+            const runingApp = this.runingApp
             runingApp.push(app)
             this.$store.commit('updateRuningApp', runingApp)
+        },
+        closeApp (app) {
+            const runingApp = this.runingApp
+            const hitAppIndex = runingApp.findIndex(item => app.id === item.id)
+            if (hitAppIndex < 0) return
+            runingApp.splice(hitAppIndex, 1)
+            this.$store.commit('updateRuningApp', runingApp)
+        },
+        dragStart () {
+            this.draging = true
+        },
+        dragEnd () {
+            this.draging = false
         }
     }
 }
@@ -77,5 +98,16 @@ export default {
         justify-content: flex-start;
         align-items: flex-start;
     }
+}
+.desktop-draggable {
+    position: relative;
+}
+.desktop-draggable-layer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 3;
 }
 </style>

@@ -47,6 +47,7 @@ export default {
             })
         },
         close () {
+            if (!this.$refs['msgContent']) return
             this.$refs['msgContent'].style = 'animation: comeOutRight .3s forwards;'
             setTimeout(() => {
                 this.$emit('close')

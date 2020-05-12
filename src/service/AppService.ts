@@ -10,6 +10,16 @@ class AppService {
         if (hitAppIndex >= 0) runingApps.splice(hitAppIndex, 1)
         return runingApps
     }
+    public runApp (app: App, context: any) {
+        if (this.checkAppRun(context.runingApp, app)) {
+            context.bus.$emit('activeAppFn', app)
+        } else {
+            const runingApp = context.runingApp
+            runingApp.push(app)
+            context.$store.commit('updateRuningApp', runingApp)
+        }
+        context.$store.commit('updateActiveApp', app)
+    }
 }
 
 export default AppService

@@ -3,8 +3,9 @@
     ref="login"
     class="login">
         <section
+        ref="loginBg"
         class="login-bg"
-        :style="`background-image: url('${bgUrl}');${showLogin ? 'animation: blurAni .3s forwards;' : ''}`"></section>
+        :style="`background-image: url('${bgUrl}');`"></section>
         <section
         v-show="!showLogin"
         class="current opacityAni">
@@ -30,6 +31,7 @@ import LoginService from '@/service/Login'
 import {getWeek} from '@/lib/date'
 import {fullScreenFun, fullScreenable} from '@/lib/tools'
 import {mapState} from 'vuex'
+import {TweenMax, Power4} from 'gsap'
 import moment from 'moment'
 
 export default {
@@ -60,7 +62,7 @@ export default {
         }
     },
     mounted () {
-        // document.addEventListener('keydown', this.onKeyDown)
+        document.addEventListener('keydown', this.onKeyDown)
         document.addEventListener('mouseup', this.onKeyDown)
         // fullScreenFun()
     },
@@ -69,8 +71,46 @@ export default {
         document.removeEventListener('mouseup', this.onKeyDown)
     },
     methods: {
-        onKeyDown () {
-            this.showLogin = true
+        onKeyDown (e) {
+            if (this.showLogin === true && e.keyCode !== 27) return
+            const scale = document.body.offsetHeight / document.body.offsetWidth
+            const start = {
+                left: -10,
+                top: -10 * scale,
+                right: -10,
+                bottom: -10* scale,
+                filter: 'blur(0)'
+            }
+            const end = {
+                left: -70,
+                top: -70 * scale,
+                right: -70,
+                bottom: -70 * scale,
+                filter: 'blur(5px)'
+            }
+            if (e.keyCode === 27) {
+                this.showLogin = false
+                TweenMax.fromTo(
+                    this.$refs.loginBg,
+                    .1,
+                    end,
+                    {
+                        ...start,
+                        ease: Power4.easeOut
+                    }
+                );
+            } else {
+                this.showLogin = true
+                TweenMax.fromTo(
+                    this.$refs.loginBg,
+                    .1,
+                    start,
+                    {
+                        ...end,
+                        ease: Power4.easeOut
+                    }
+                );
+            }
         },
         setTime (time) {
             const current = moment(time)

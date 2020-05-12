@@ -64,10 +64,8 @@ export default {
         itemClick (active) {
             this.active = active
         },
-        runApp (app, index) {
-            const runingApp = this.runingApp
-            runingApp.push(app)
-            this.$store.commit('updateRuningApp', runingApp)
+        runApp (app) {
+            appService.runApp(app, this)
         },
         closeApp (app) {
             this.$store.commit('updateRuningApp', appService.closeApp(this.runingApp, app))

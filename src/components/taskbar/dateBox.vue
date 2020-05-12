@@ -111,6 +111,7 @@ export default {
             this.todoVisiable = !this.todoVisiable
         },
         close () {
+            if (!this.$refs['dateContent']) return
             this.$refs['dateContent'].style = 'animation: comeOutBottom .3s forwards;'
             setTimeout(() => {
                 this.$emit('close')

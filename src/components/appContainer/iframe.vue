@@ -10,14 +10,13 @@
                 {{app.name}}
             </section>
             <section class="app-iframe-opt-right">
-                <i @click.stop="minus" @mousedown.stop="() => {}" title="最小化" class="fa fa-window-minimize"></i>
-                <i @click="maxus" @mousedown.stop="() => {}" title="最大化" :class="[ifMaxus ? 'fa-window-restore' : 'fa-window-maximize']" class="fa"></i>
-                <i @click.stop="close" @mousedown.stop="() => {}" title="关闭" class="fa fa-window-close"></i>
+                <i @click.stop="minus" @mousedown.stop="() => {}" title="最小化" class="fa">—</i>
+                <i @click="maxus" @mousedown.stop="() => {}" title="最大化" :class="[ifMaxus ? 'fa-clone' : 'fa-square-o']" class="fa"></i>
+                <i @click.stop="close" @mousedown.stop="() => {}" title="关闭" class="fa fa-close"></i>
             </section>
         </section>
         <iframe
         v-if="app.url"
-        allow='*'
         referrerpolicy="no-referrer"
         frameborder='0'
         scrolling='auto'
@@ -46,7 +45,7 @@
 
 <script>
 import Calculator from '@/components/calculator/index'
-import {TweenMax, Circ} from 'gsap'
+import {TweenMax, Power4} from 'gsap'
 import {mouseMove} from '@/lib/helper-dom'
 import {mapState} from 'vuex'
 
@@ -121,13 +120,13 @@ export default {
             this.$el.style.opacity = '1'
             TweenMax.fromTo(
                 this.$el,
-                .2,
+                .5,
                 {
                     opacity: 1,
                     translateY: 0
                 },
                 {
-                    ease: Circ.easeIn,
+                    ease: Power4.easeOut ,
                     display: 'none',
                     opacity: 0,
                     translateY: 300,
@@ -156,13 +155,9 @@ export default {
             this.ifMaxus = !this.ifMaxus
             let curLeft = this.$el.style.left
             let curTop = this.$el.style.top
-            let curWidth = this.$el.style.width || this.preSize[0]
-            let curHeight = this.$el.style.height || this.preSize[1]
             let animationObj = {
                 left: curLeft,
                 top: curTop,
-                width: curWidth,
-                height: curHeight
             }
             this.parseAnimationObj(animationObj)
             let animationEnd = {}
@@ -182,7 +177,20 @@ export default {
                 }
             }
             this.parseAnimationObj(animationEnd)
-            TweenMax.fromTo(this.$el, .2, animationObj, {...animationEnd, ease: Circ.easeIn});
+            this.$el.style.width = animationEnd.width + 'px'
+            this.$el.style.height = animationEnd.height + 'px'
+            TweenMax.fromTo(
+                this.$el,
+                .5,
+                {
+                    ...animationObj,
+                },
+                {
+                    left: animationEnd.left,
+                    top: animationEnd.top,
+                    ease: Power4.easeOut ,
+                }
+            );
         },
         appClick () {
             this.setActive()
@@ -194,17 +202,16 @@ export default {
                         + this.parseNum(this.$el.style.width, containerWidth)/2
             const top = this.parseNum(this.$el.style.top, containerHeight) 
                         + this.parseNum(this.$el.style.height, containerHeight)/2
-            TweenMax.to(this.$el, .2, {
-                height: 0,
-                width: 0,
+            TweenMax.to(this.$el, .5, {
+                scale: 0,
                 left,
                 top,
                 opacity: 0,
-                ease: Circ.easeIn
+                ease: Power4.easeOut 
             });
             setTimeout(() => {
                 this.$emit('closeApp', this.app)
-            }, 300)
+            }, 600)
         },
         setActive () {
             if (this.$el.style.display === 'none') {
@@ -237,7 +244,7 @@ export default {
             this.$el.style.opacity = '0'
             TweenMax.fromTo(
                 this.$el,
-                .2,
+                .5,
                 {
                     display: 'none',
                     opacity: 0,
@@ -245,7 +252,7 @@ export default {
                     scale: 0.5
                 },
                 {
-                    ease: Circ.easeIn,
+                    ease: Power4.easeOut ,
                     display: 'block',
                     opacity: 1,
                     translateY: 0,
@@ -425,30 +432,38 @@ $menuBarHeight: 30px;
     &-opt {
         width: 100%;
         height: $menuBarHeight;
-        background-image: linear-gradient(45deg, #0081ff, #1cbbb4);
-        color: #ffffff;
+        background-color: #ffffff;
+        color: black;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 0 10px;
+        padding-left: 10px;
         cursor: pointer;
         &-left {
             font-size: .9rem;
         }
         &-right {
-            width: 100px;
+            width: 150px;
             display: flex;
-            justify-content: space-between;
+            justify-content: space-around;
             align-items: center;
             height: 100%;
             i {
                 cursor: pointer;
-                color: lightgrey;
                 line-height: 100%;
-                padding: 0 10px;
+                transition: background-color .3s, color 0s;
+                width: 33%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100%;
                 &:hover {
-                    color: white;
+                    background-color: rgba(230, 230, 230, 1);
                 }
+            }
+            .fa-close:hover {
+                background-color: red;
+                color: white;
             }
         }
     }

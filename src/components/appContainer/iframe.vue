@@ -3,6 +3,7 @@
     v-drag
     @click="appClick"
     :style="`z-index: 1000;`"
+    :id="app.id"
     class="app-iframe">
         <section class="app-iframe-opt">
             <section class="app-iframe-opt-left">
@@ -11,7 +12,7 @@
             <section class="app-iframe-opt-right">
                 <i @click.stop="minus" @mousedown.stop="() => {}" title="最小化" class="fa fa-window-minimize"></i>
                 <i @click="maxus" @mousedown.stop="() => {}" title="最大化" :class="[ifMaxus ? 'fa-window-restore' : 'fa-window-maximize']" class="fa"></i>
-                <i @click.stop="close" title="关闭" class="fa fa-window-close"></i>
+                <i @click.stop="close" @mousedown.stop="() => {}" title="关闭" class="fa fa-window-close"></i>
             </section>
         </section>
         <iframe
@@ -47,11 +48,27 @@
 import Calculator from '@/components/calculator/index'
 import {TweenMax, Circ} from 'gsap'
 import {mouseMove} from '@/lib/helper-dom'
+import {mapState} from 'vuex'
 
 export default {
     name: 'app-container-iframe',
     components: {
         Calculator
+    },
+    computed: {
+        ...mapState({
+            activeApp: state => state.activeApp
+        })
+    },
+    watch: {
+        activeApp: {
+            deep: true,
+            handler (app) {
+                if (app.id === this.app.id) {
+                    this.setActive()
+                }
+            }
+        }
     },
     props: {
         app: {
@@ -66,6 +83,13 @@ export default {
             preSize: this.app.defaultSize,
             sizeChangeLayer: false
         }
+    },
+    created () {
+        this.bus.$on('activeAppFn', (app) => {
+            if (this.app.id === app.id) {
+                this.setActive()
+            }
+        })
     },
     mounted () {
         this.init()
@@ -89,11 +113,27 @@ export default {
                 } else {
                     body.appendChild(this.$el);
                 }
+                this.$el.style.display = 'none'
                 this.setActive()
             })
         },
         minus () {
-            this.$el.className = 'app-iframe app-hidden'
+            this.$el.style.opacity = '1'
+            TweenMax.fromTo(
+                this.$el,
+                .2,
+                {
+                    opacity: 1,
+                    translateY: 0
+                },
+                {
+                    ease: Circ.easeIn,
+                    display: 'none',
+                    opacity: 0,
+                    translateY: 300,
+                    scale: 0.5
+                }
+            );
         },
         parseAnimationObj (obj) {
             const containerWidth = document.body.offsetWidth
@@ -167,6 +207,9 @@ export default {
             }, 300)
         },
         setActive () {
+            if (this.$el.style.display === 'none') {
+                this.showAppAnimate()
+            }
             let appIframes = document.querySelectorAll('.app-iframe')
             let maxZIndex = 1000
             let minZIndex = appIframes[0].style.zIndex ? +appIframes[0].style.zIndex : 1000
@@ -187,6 +230,28 @@ export default {
                     app.style.zIndex = +app.style.zIndex - diff
                 }
             }
+            this.$store.commit('updateActiveApp', this.app)
+        },
+        showAppAnimate () {
+            this.$el.style.display = 'block'
+            this.$el.style.opacity = '0'
+            TweenMax.fromTo(
+                this.$el,
+                .2,
+                {
+                    display: 'none',
+                    opacity: 0,
+                    translateY: 300,
+                    scale: 0.5
+                },
+                {
+                    ease: Circ.easeIn,
+                    display: 'block',
+                    opacity: 1,
+                    translateY: 0,
+                    scale: 1
+                }
+            );
         },
         /**
          * app 窗口大小变化
@@ -211,6 +276,8 @@ export default {
                 if (height < 200) return
                 this.$el.style.top = top + 'px'
                 this.$el.style.height = height + 'px'
+                this.prePosition = [this.prePosition[0], top]
+                this.preSize = [this.preSize[0], height]
             }, () => {
                 this.layerHelper(false)
             })
@@ -235,6 +302,8 @@ export default {
                 if (width < 200) return
                 this.$el.style.left = left + 'px'
                 this.$el.style.width = width + 'px'
+                this.prePosition = [left, this.prePosition[1]]
+                this.preSize = [width, this.preSize[1]]
             }, () => {
                 this.layerHelper(false)
             })
@@ -269,12 +338,15 @@ export default {
                 if (height <= 200) height = 200
                 if (width > 200) {
                     this.$el.style.left = left + 'px'
+                    this.prePosition = [left, this.prePosition[1]]
                 }
                 if (height > 200) {
                     this.$el.style.top = top + 'px'
+                    this.prePosition = [this.prePosition[0], top]
                 }
                 this.$el.style.width = width + 'px'
                 this.$el.style.height = height + 'px'
+                this.preSize = [width, height]
             }, () => {
                 this.layerHelper(false)
             })
@@ -308,12 +380,15 @@ export default {
                 if (height <= 200) height = 200
                 if (width > 200) {
                     this.$el.style.left = left + 'px'
+                    this.prePosition = [left, this.prePosition[1]]
                 }
                 if (height > 200) {
                     this.$el.style.top = top + 'px'
+                    this.prePosition = [this.prePosition[0], top]
                 }
                 this.$el.style.width = width + 'px'
                 this.$el.style.height = height + 'px'
+                this.preSize = [width, height]
             }, () => {
                 this.layerHelper(false)
             })
@@ -381,9 +456,6 @@ $menuBarHeight: 30px;
         width: 100%;
         height: calc(100% - 30px);
     }
-}
-.app-hidden {
-    display: none;
 }
 .app-maxus {
     height: calc(100% - 40px);

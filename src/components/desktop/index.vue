@@ -29,7 +29,10 @@
 import AppItem from './appItem'
 import draggable from 'vuedraggable'
 import AppContainerIframe from '@/components/appContainer/iframe'
+import AppService from '@/service/AppService'
 import {mapState} from 'vuex'
+
+const appService = new AppService()
 
 export default {
     name: 'desktop',
@@ -67,11 +70,7 @@ export default {
             this.$store.commit('updateRuningApp', runingApp)
         },
         closeApp (app) {
-            const runingApp = this.runingApp
-            const hitAppIndex = runingApp.findIndex(item => app.id === item.id)
-            if (hitAppIndex < 0) return
-            runingApp.splice(hitAppIndex, 1)
-            this.$store.commit('updateRuningApp', runingApp)
+            this.$store.commit('updateRuningApp', appService.closeApp(this.runingApp, app))
         },
         dragStart () {
             this.draging = true

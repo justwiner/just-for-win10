@@ -7,7 +7,16 @@
         </section>
         <section class="task-search-temp"></section>
         <section class="task-list">
-
+            <section
+            v-for="item in runingApp"
+            :key="item.id"
+            @click="setActiveApp(item)"
+            :class="[
+                activeApp && activeApp.id === item.id ? 'task-item-active' : ''
+            ]"
+            class="task-list-item task-item">
+                <img :src="item.icon"/>
+            </section>
         </section>
         <section class="task-tip">
             <section class="task-tip-date task-item" @click="changeBox('dateBoxVisible', true)">
@@ -42,7 +51,8 @@ export default {
     computed: {
         ...mapState({
             currentTime: state => state.currentTime,
-            runingApp: state => state.runingApp
+            runingApp: state => state.runingApp,
+            activeApp: state => state.activeApp,
         })
     },
     data () {
@@ -78,6 +88,10 @@ export default {
         searhFocus () {
             if (this.dateBoxVisible) this.$refs.dateBox.close()
             if (this.msgBoxVisible) this.$refs.msgBox.close()
+        },
+        setActiveApp (app) {
+            this.$store.commit('updateActiveApp', app)
+            this.bus.$emit('activeAppFn', app)
         }
     }
 }
@@ -152,6 +166,32 @@ $tip-width: 130px;
     }
     .task-list {
         width: calc(100% - #{$search-width} - #{$windows-left} - #{$tip-width});
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        &-item {
+            height: $task-height;
+            width: $task-height + 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            &::before {
+                position: absolute;
+                content: '';
+                bottom: 0;
+                left: 5px;
+                right: 5px;
+                margin: 0 auto;
+                height: 2px;
+                background-color: #76b9ed;
+                transition: left .2s, right .2s;
+            }
+            img {
+                width: calc((100% - 20px) * 0.8);
+                height: 80%;
+            }
+        }
     }
     .task-tip {
         width: $tip-width;
@@ -175,6 +215,21 @@ $tip-width: 130px;
         &:hover {
             background-color: rgba(54, 52, 53, .8);
             transition: background-color .2s;
+        }
+        &:hover.task-list-item {
+            &::before {
+                left: 0;
+                right: 0;
+            }
+        }
+    }
+    .task-item-active {
+        background-color: rgba(54, 52, 53, .8);
+    }
+    .task-item-active.task-list-item {
+        &::before {
+            left: 0;
+            right: 0;
         }
     }
 }

@@ -10,9 +10,9 @@
                 {{app.name}}
             </section>
             <section class="app-iframe-opt-right">
-                <i @click.stop="minus" @mousedown.stop="() => {}" title="最小化" class="fa">—</i>
+                <i @click.stop="minus" @mousedown.stop="() => {}" title="最小化" class="fa" style="font-size: 1.5em;">－</i>
                 <i @click="maxus" @mousedown.stop="() => {}" title="最大化" :class="[ifMaxus ? 'fa-clone' : 'fa-square-o']" class="fa"></i>
-                <i @click.stop="close" @mousedown.stop="() => {}" title="关闭" class="fa fa-close"></i>
+                <i @click.stop="close" @mousedown.stop="() => {}" title="关闭" class="fa" style="font-size: 1.5em;">×</i>
             </section>
         </section>
         <iframe
@@ -25,11 +25,13 @@
             <p>Your browser does not support iframes.</p>
         </iframe>
         <section class="sizeChange-layer" v-show="sizeChangeLayer"></section>
-        <component
-        class="app-content"
+        <section
         @mousedown.stop="() => {}"
         v-if="app.type === 'app'"
-        v-bind:is="app.component"></component>
+        class="app-content">
+            <component
+            v-bind:is="app.component"></component>
+        </section>
 
         <!-- app应用窗口大小调整触发按钮 8个方向 -->
         <section @mousedown.stop="(e) => {sizeChangeS(e, 'top')}" class='app-frame-sizeBut sizeBut-top'></section>

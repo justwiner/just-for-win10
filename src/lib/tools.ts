@@ -38,7 +38,31 @@ function fullScreenable(): any {
     document.msFullscreenEnabled;
 }
 
+/**
+ * 防抖
+ * @param fn 
+ * @param wait 
+ */
+function debounce (fn: Function, wait: number):Function {
+    let timeout:any = null;    
+    return function() {
+        if(timeout !== null) clearTimeout(timeout);
+        timeout = setTimeout(fn, wait);
+    }
+}
+
+function trimStart (str: string, hitStr: string) {
+    if (hitStr == null || hitStr == "") {
+        return str.replace(/^s*/, '');
+    }
+    else {
+        return str.replace(new RegExp("^" + hitStr + "*"), '');
+    }
+}
+
 export {
     fullScreenFun,
     fullScreenable,
+    debounce,
+    trimStart
 };

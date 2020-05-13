@@ -36,13 +36,20 @@ export default {
         visible: {
             default: false,
             type: Boolean
+        },
+        searchValue: {
+            default: '',
+            type: String
         }
     },
     computed: {
         ...mapState({
-            apps: state => state.app.filter(item => item.type !== 'temp'),
+            storeApps: state => state.app.filter(item => item.type !== 'temp'),
             runingApp: state => state.runingApp
-        })
+        }),
+        apps () {
+            return this.storeApps.filter(item => item.name.includes(this.searchValue))
+        }
     },
     mounted () {
         this.init()

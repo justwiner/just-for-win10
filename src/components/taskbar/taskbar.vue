@@ -5,7 +5,7 @@
         class="task-bar-windows task-bar-icon task-item"/>
         <section class="task-bar-search" @click="searhFocus">
             <section class="task-bar-search-prefix task-bar-icon"/>
-            <input class="task-bar-search-textarea" type="text"/>
+            <input @input="searchChange" class="task-bar-search-textarea" type="text"/>
         </section>
         <section class="task-search-temp"></section>
         <section class="task-list">
@@ -38,7 +38,8 @@
         <AppBox
         ref="appBox"
         @close="changeBox('appBoxVisible', false)"
-        :visible='appBoxVisible'/>
+        :visible='appBoxVisible'
+        :searchValue='searchValue'/>
     </section>
 </template>
 
@@ -48,6 +49,7 @@ import DateBox from './dateBox'
 import AppBox from './appBox'
 import moment from 'moment'
 import {mapState} from 'vuex'
+import {debounce} from '@/lib/tools'
 
 export default {
     name: 'task-bar',
@@ -69,7 +71,8 @@ export default {
             date: '',
             msgBoxVisible: false,
             dateBoxVisible: false,
-            appBoxVisible: false
+            appBoxVisible: false,
+            searchValue: ''
         }
     },
     watch: {
@@ -103,6 +106,10 @@ export default {
         searhFocus () {
             if (this.dateBoxVisible) this.$refs.dateBox.close()
             if (this.msgBoxVisible) this.$refs.msgBox.close()
+            this.changeBox('appBoxVisible', true)
+        },
+        searchChange (e) {
+            this.searchValue = e.target.value
         },
         setActiveApp (app) {
             this.$store.commit('updateActiveApp', app)

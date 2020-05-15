@@ -23,6 +23,14 @@ input {
     outline: none;
 }
 
+.center {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .opacityAni {
     animation: opacityAni .3s forwards;
 }
@@ -41,11 +49,30 @@ input {
     z-index: 2000;
 }
 
+.layer-hidden {
+    animation: layer-hidden .3s forwards;
+}
+@keyframes layer-hidden {
+    0% {
+        opacity: 1;
+        display: block;
+    }
+    100% {
+        opacity: 0;
+        display: none;
+    }
+}
+
 .touch-item {
     &:hover {
         background-color: rgba(54, 52, 53, .8);
         transition: background-color .2s;
     }
+}
+
+.vc-saturation-pointer, .vc-hue-pointer, .vc-alpha-pointer {
+    transition: top 0s,
+                left 0s;
 }
 
 /*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
@@ -123,5 +150,45 @@ input {
     }
     100% {
         transform: translateY(100%);
+    }
+}
+
+.ltMove {
+    animation: ltMove 3s infinite;
+}
+
+@keyframes ltMove {
+    0% {
+        transform: translateY(0);
+        box-shadow: 0px 0px 5px grey;
+    }
+    25% {
+        transform: translateY(-10%);
+        box-shadow: 5px 5px 10px grey;
+    }
+    50% {
+        transform: translateY(0%);
+        box-shadow: 0px 0px 5px grey;
+    }
+    75% {
+        transform: translateY(10%);
+        box-shadow: 5px 5px 10px grey;
+    }
+    100% {
+        transform: translateY(0%);
+        box-shadow: 0px 0px 5px #ccc;
+    }
+}
+
+
+.boxShow {
+    animation: boxShow .3s forwards ease-out;
+}
+@keyframes boxShow {
+    0% {
+        transform: scale(0.5);
+    }
+    100% {
+        transform: scale(1);
     }
 }

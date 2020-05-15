@@ -27,17 +27,17 @@
 </template>
 
 <script>
-import LoginService from '@/service/Login'
-import {getWeek} from '@/lib/date'
-import {fullScreenFun, fullScreenable} from '@/lib/tools'
-import {mapState} from 'vuex'
-import {TweenMax, Power4} from 'gsap'
-import moment from 'moment'
+import LoginService from '@/service/Login';
+import {getWeek} from '@/lib/date';
+import {fullScreenFun, fullScreenable} from '@/lib/tools';
+import {mapState} from 'vuex';
+import {TweenMax, Power4} from 'gsap';
+import moment from 'moment';
 
 export default {
     name: 'login',
-    data () {
-        let loginService = new LoginService()
+    data() {
+        let loginService = new LoginService();
         return {
             loginService,
             bgUrl: loginService.getRandomBgUrl(),
@@ -45,7 +45,7 @@ export default {
             time: '00:00:00',
             date: '01-01',
             week: '星期一',
-            showLogin: false
+            showLogin: false,
         }
     },
     computed: {
@@ -57,74 +57,74 @@ export default {
         currentTime: {
             immediate: true,
             handler (time) {
-                this.setTime(time)
-            }
+                this.setTime(time);
+            },
         }
     },
-    mounted () {
-        document.addEventListener('keydown', this.onKeyDown)
-        document.addEventListener('mouseup', this.onKeyDown)
+    mounted() {
+        document.addEventListener('keydown', this.onKeyDown);
+        document.addEventListener('mouseup', this.onKeyDown);
         // fullScreenFun()
     },
-    beforeDestroy () {
-        document.removeEventListener('keydown', this.onKeyDown)
-        document.removeEventListener('mouseup', this.onKeyDown)
+    beforeDestroy() {
+        document.removeEventListener('keydown', this.onKeyDown);
+        document.removeEventListener('mouseup', this.onKeyDown);
     },
     methods: {
-        onKeyDown (e) {
+        onKeyDown(e) {
             if (this.showLogin === true && e.keyCode !== 27) return
-            const scale = document.body.offsetHeight / document.body.offsetWidth
+            const scale = document.body.offsetHeight / document.body.offsetWidth;
             const start = {
                 left: -10,
                 top: -10 * scale,
                 right: -10,
                 bottom: -10* scale,
-                filter: 'blur(0)'
+                filter: 'blur(0)',
             }
             const end = {
                 left: -70,
                 top: -70 * scale,
                 right: -70,
                 bottom: -70 * scale,
-                filter: 'blur(5px)'
+                filter: 'blur(5px)',
             }
             if (e.keyCode === 27) {
-                this.showLogin = false
+                this.showLogin = false;
                 TweenMax.fromTo(
                     this.$refs.loginBg,
                     .1,
                     end,
                     {
                         ...start,
-                        ease: Power4.easeOut
-                    }
+                        ease: Power4.easeOut,
+                    },
                 );
             } else {
-                this.showLogin = true
+                this.showLogin = true;
                 TweenMax.fromTo(
                     this.$refs.loginBg,
                     .1,
                     start,
                     {
                         ...end,
-                        ease: Power4.easeOut
-                    }
+                        ease: Power4.easeOut,
+                    },
                 );
             }
         },
-        setTime (time) {
-            const current = moment(time)
-            this.time = current.format('H:mm:s')
-            this.date = current.format('MM月DD日')
-            this.week = getWeek(current)
+        setTime(time) {
+            const current = moment(time);
+            this.time = current.format('H:mm:s');
+            this.date = current.format('MM月DD日');
+            this.week = getWeek(current);
         },
-        login () {
+        login() {
             this.$router.push({
-                name: 'Home'
+                name: 'Home',
             })
-        }
-    }
-}
+        },
+    },
+};
 </script>
 
 <style lang='scss'>

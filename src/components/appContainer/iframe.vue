@@ -30,6 +30,7 @@
         v-if="app.type === 'app'"
         class="app-content">
             <component
+            ref="appC"
             v-bind:is="app.component"></component>
         </section>
 
@@ -46,7 +47,6 @@
 </template>
 
 <script>
-import Calculator from '@/components/calculator/index'
 import {TweenMax, Power4} from 'gsap'
 import {mouseMove} from '@/lib/helper-dom'
 import {mapState} from 'vuex'
@@ -54,7 +54,9 @@ import {mapState} from 'vuex'
 export default {
     name: 'app-container-iframe',
     components: {
-        Calculator
+        Calculator: () => import('@/components/calculator/index'),
+        ColorPick: () => import('@/components/colorPick/index'),
+        SimpleMap: () => import('@/components/simpleMap/index'),
     },
     computed: {
         ...mapState({
@@ -193,6 +195,12 @@ export default {
                     ease: Power4.easeOut ,
                 }
             );
+            if (this.$refs.appC && this.$refs.appC.sizeChange) {
+                this.$refs.appC.sizeChange({
+                    ...animationEnd,
+                    height: animationEnd.height - 30
+                })
+            }
         },
         appClick () {
             this.setActive()
@@ -283,12 +291,14 @@ export default {
                     height = -changeHeight
                 }
                 if (height < 200) return
+                if (top < 0) top = 0
                 this.$el.style.top = top + 'px'
                 this.$el.style.height = height + 'px'
                 this.prePosition = [this.prePosition[0], top]
                 this.preSize = [this.preSize[0], height]
             }, () => {
                 this.layerHelper(false)
+                this.sizeChange()
             })
         },
         /**
@@ -315,6 +325,7 @@ export default {
                 this.preSize = [width, this.preSize[1]]
             }, () => {
                 this.layerHelper(false)
+                this.sizeChange()
             })
         },
         /**
@@ -349,6 +360,7 @@ export default {
                     this.$el.style.left = left + 'px'
                     this.prePosition = [left, this.prePosition[1]]
                 }
+                if (top < 0) top = 0
                 if (height > 200) {
                     this.$el.style.top = top + 'px'
                     this.prePosition = [this.prePosition[0], top]
@@ -358,6 +370,7 @@ export default {
                 this.preSize = [width, height]
             }, () => {
                 this.layerHelper(false)
+                this.sizeChange()
             })
         },
         /**
@@ -391,6 +404,7 @@ export default {
                     this.$el.style.left = left + 'px'
                     this.prePosition = [left, this.prePosition[1]]
                 }
+                if (top < 0) top = 0
                 if (height > 200) {
                     this.$el.style.top = top + 'px'
                     this.prePosition = [this.prePosition[0], top]
@@ -400,7 +414,20 @@ export default {
                 this.preSize = [width, height]
             }, () => {
                 this.layerHelper(false)
+                this.sizeChange()
             })
+        },
+        sizeChange () {
+            const docWidth = document.body.offsetWidth
+            const docHeight = document.body.offsetHeight
+            if (this.$refs.appC && this.$refs.appC.sizeChange) {
+                this.$refs.appC.sizeChange({
+                    width: this.parseNum(this.$el.style.width, docWidth),
+                    height: this.parseNum(this.$el.style.height, docHeight) - 30,
+                    left: this.parseNum(this.$el.style.left, docWidth),
+                    top: this.parseNum(this.$el.style.top, docHeight),
+                })
+            }
         },
         /**
          * app 窗口尺寸位置变化时

@@ -1,12 +1,12 @@
 interface App {
-    name: String,
-    type: String,
-    url: String,
-    icon: String,
-    defaultSize: String[],
-    id: Number
+    name: string;
+    type: string;
+    url: string;
+    icon: string;
+    defaultSize: string[];
+    id: number;
 }
 
 export {
-    App
-}
+    App,
+};

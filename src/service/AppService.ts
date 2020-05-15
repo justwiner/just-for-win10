@@ -1,25 +1,25 @@
-import {App} from './class/app'
+import {App} from './class/app';
 
 class AppService {
-    public checkAppRun (runingApps: App[], app: App): Boolean {
-        const hitApp = runingApps.find(item => item.id === app.id)
-        return hitApp ? true : false
+    public checkAppRun(runingApps: App[], app: App): Boolean {
+        const hitApp = runingApps.find((item) => item.id === app.id);
+        return hitApp ? true : false;
     }
-    public closeApp (runingApps: App[], app: App): App[] {
-        const hitAppIndex = runingApps.findIndex(item => app.id === item.id)
-        if (hitAppIndex >= 0) runingApps.splice(hitAppIndex, 1)
-        return runingApps
+    public closeApp(runingApps: App[], app: App): App[] {
+        const hitAppIndex = runingApps.findIndex((item) => app.id === item.id);
+        if (hitAppIndex >= 0) { runingApps.splice(hitAppIndex, 1); }
+        return runingApps;
     }
-    public runApp (app: App, context: any) {
+    public runApp(app: App, context: any) {
         if (this.checkAppRun(context.runingApp, app)) {
-            context.bus.$emit('activeAppFn', app)
+            context.bus.$emit('activeAppFn', app);
         } else {
-            const runingApp = context.runingApp
-            runingApp.push(app)
-            context.$store.commit('updateRuningApp', runingApp)
+            const runingApp = context.runingApp;
+            runingApp.push(app);
+            context.$store.commit('updateRuningApp', runingApp);
         }
-        context.$store.commit('updateActiveApp', app)
+        context.$store.commit('updateActiveApp', app);
     }
 }
 
-export default AppService
+export default AppService;

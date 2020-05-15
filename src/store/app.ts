@@ -5,7 +5,7 @@ const apps = [
         url: 'https://www.winerlu.com/',
         icon: require('../assets/icon/blog.png'),
         defaultSize: ['50%', '50%'],
-        id: 1
+        id: 1,
     },
     {
         name: 'mess-cli脚手架',
@@ -13,7 +13,7 @@ const apps = [
         url: 'https://www.messcli.cn/',
         icon: require('../assets/icon/mess-cli.png'),
         defaultSize: ['50%', '50%'],
-        id: 2
+        id: 2,
     },
     {
         name: 'mess-cli DEMO',
@@ -21,7 +21,7 @@ const apps = [
         url: 'https://demo.messcli.cn/',
         icon: require('../assets/icon/mess-demo.png'),
         defaultSize: ['50%', '50%'],
-        id: 3
+        id: 3,
     },
     {
         name: '计算器',
@@ -29,7 +29,23 @@ const apps = [
         icon: require('../assets/icon/calculator.svg'),
         component: 'calculator',
         defaultSize: ['50%', '80%'],
-        id: 4
+        id: 4,
+    },
+    {
+        name: '主题色-颜色拾取',
+        type: 'app',
+        icon: require('../assets/icon/colorPick.svg'),
+        component: 'colorPick',
+        defaultSize: ['50%', '80%'],
+        id: 5,
+    },
+    {
+        name: '地图',
+        type: 'app',
+        icon: require('../assets/icon/map.svg'),
+        component: 'simpleMap',
+        defaultSize: ['50%', '80%'],
+        id: 6,
     },
 ];
 

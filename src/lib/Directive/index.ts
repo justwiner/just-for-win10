@@ -1,1 +1,1 @@
-import './drag'
+import './drag';

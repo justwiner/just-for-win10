@@ -5,30 +5,30 @@
             <section class="result-curInput">{{curInput}}</section>
         </section>
         <section class="app-calculator-keyboard" @click.stop="keyboardClick">
-            <just-button class="touch-keyboard">%</just-button>
-            <just-button class="touch-keyboard">√</just-button>
-            <just-button class="touch-keyboard">X²</just-button>
-            <just-button class="touch-keyboard">1/X</just-button>
-            <just-button class="touch-keyboard">CE</just-button>
-            <just-button class="touch-keyboard">C</just-button>
-            <just-button class="touch-keyboard"><i class="fa fa-long-arrow-left"></i></just-button>
-            <just-button class="touch-keyboard">÷</just-button>
-            <just-button class="touch-keyboard">7</just-button>
-            <just-button class="touch-keyboard">8</just-button>
-            <just-button class="touch-keyboard">9</just-button>
-            <just-button class="touch-keyboard">×</just-button>
-            <just-button class="touch-keyboard">4</just-button>
-            <just-button class="touch-keyboard">5</just-button>
-            <just-button class="touch-keyboard">6</just-button>
-            <just-button class="touch-keyboard">－</just-button>
-            <just-button class="touch-keyboard">1</just-button>
-            <just-button class="touch-keyboard">2</just-button>
-            <just-button class="touch-keyboard">3</just-button>
-            <just-button class="touch-keyboard">＋</just-button>
-            <just-button class="touch-keyboard">±</just-button>
-            <just-button class="touch-keyboard">0</just-button>
-            <just-button class="touch-keyboard">.</just-button>
-            <just-button class="touch-keyboard">＝</just-button>
+            <just-button class="touch-keyboard"><div class="center">%</div></just-button>
+            <just-button class="touch-keyboard"><div class="center">√</div></just-button>
+            <just-button class="touch-keyboard"><div class="center">X²</div></just-button>
+            <just-button class="touch-keyboard"><div class="center">1/X</div></just-button>
+            <just-button class="touch-keyboard"><div class="center">CE</div></just-button>
+            <just-button class="touch-keyboard"><div class="center">C</div></just-button>
+            <just-button class="touch-keyboard"><div class="center"><i class="fa fa-long-arrow-left"></i></div></just-button>
+            <just-button class="touch-keyboard"><div class="center">÷</div></just-button>
+            <just-button class="touch-keyboard"><div class="center">7</div></just-button>
+            <just-button class="touch-keyboard"><div class="center">8</div></just-button>
+            <just-button class="touch-keyboard"><div class="center">9</div></just-button>
+            <just-button class="touch-keyboard"><div class="center">×</div></just-button>
+            <just-button class="touch-keyboard"><div class="center">4</div></just-button>
+            <just-button class="touch-keyboard"><div class="center">5</div></just-button>
+            <just-button class="touch-keyboard"><div class="center">6</div></just-button>
+            <just-button class="touch-keyboard"><div class="center">－</div></just-button>
+            <just-button class="touch-keyboard"><div class="center">1</div></just-button>
+            <just-button class="touch-keyboard"><div class="center">2</div></just-button>
+            <just-button class="touch-keyboard"><div class="center">3</div></just-button>
+            <just-button class="touch-keyboard"><div class="center">＋</div></just-button>
+            <just-button class="touch-keyboard"><div class="center">±</div></just-button>
+            <just-button class="touch-keyboard"><div class="center">0</div></just-button>
+            <just-button class="touch-keyboard"><div class="center">.</div></just-button>
+            <just-button class="touch-keyboard"><div class="center">＝</div></just-button>
         </section>
         <section class="app-calculator-records">
             <section class="records-header">历史记录</section>
@@ -103,11 +103,12 @@ export default {
         .touch-keyboard {
             width: 100%;
             height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            // display: flex;
+            // align-items: center;
+            // justify-content: center;
             font-size: 1.5em;
             background-color: #ffffff;
+            color: #000;
             transition: background-color .3s;
             &:hover {
                 background-color: rgba(227,227,227,1);

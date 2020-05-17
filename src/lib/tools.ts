@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 function fullScreenFun() {
     const iFullscreen: boolean = false; // 当前是否全屏状态
     const fullscreenEnabled = document.fullscreenEnabled ||
@@ -59,9 +61,12 @@ function trimStart(str: string, hitStr: string) {
     }
 }
 
+const isCancel = axios.isCancel;
+
 export {
     fullScreenFun,
     fullScreenable,
     debounce,
     trimStart,
+    isCancel,
 };

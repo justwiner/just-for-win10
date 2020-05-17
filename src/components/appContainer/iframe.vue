@@ -454,6 +454,7 @@ $menuBarHeight: 30px;
     width: 50%;
     box-shadow: 0 0 5px #000000;
     background: rgba($color: #ffffff, $alpha: .6);
+    overflow: hidden;
     transition: height 0s,
                 width 0s,
                 border .3s,

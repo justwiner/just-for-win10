@@ -9,20 +9,37 @@
         ref="mapLayer"
         v-show="layerVisible"
         class="simple-map-layer"></div>
+        <div
+        ref="weatherBox"
+        :class="[
+            weatherLoading ? 'fixBox-show' : ''
+        ]"
+        class="map-weather"
+        v-if="weatherLoading">
+            <i class="fa fa-spinner fa-spin"></i>
+            <span>{{weatherStatus}}</span>
+            <i class="fa fa-close" @click="closeWeatherBox"></i>
+        </div>
     </section>
 </template>
 
 <script>
+import MapService from './mapService'
+
 export default {
     name: 'simpleMap',
     data () {
         return {
             id: Date.now(),
             map: null,
+            weatherLayer: null,
             width: 0,
             height: 0,
             layerVisible: false,
-            mapLoad: false
+            mapLoad: false,
+            service: null,
+            weatherStatus: '',
+            weatherLoading: false
         }
     },
     mounted () {
@@ -32,12 +49,25 @@ export default {
         }, 300)
         setTimeout(() => {
             this.map = new AMap.Map(`map-${this.id}`, {
-                resizeEnable: true
+                viewMode: '3D',
+                pitch: 60,
+                resizeEnable: true,
+                zoom: 7,
+                zooms: [3, 20],
             })
+            this.map.plugin(['AMap.DistrictSearch', 'Map3D'], () => {
+                this.weatherLayer = new AMap.Object3DLayer({ zIndex: 110, opacity: 1 });
+                this.map.add(this.weatherLayer)
+            })
+            this.service = new MapService(this.map, this)
+            this.map.on('complete', this.mapComplete)
         }, 500)
     },
+    beforeDestroy() {
+        this.map && this.map.destroy()
+    },
     methods: {
-        sizeChange (opt) {
+        sizeChange(opt) {
             this.mapLoad = true
             this.layerVisible = true
             this.$refs.mapLayer.className = 'simple-map-layer'
@@ -53,6 +83,15 @@ export default {
                 }, 500)
             }, 500)
         },
+        mapComplete () {
+            this.service.renderWeather()
+        },
+        closeWeatherBox () {
+            this.$refs.weatherBox.className = 'map-weather fixbox-hidden'
+            setTimeout(() => {
+                this.weatherLoading = false
+            }, 400)
+        }
     }
 }
 </script>
@@ -74,6 +113,25 @@ export default {
                 left 0s,
                 right 0s,
                 bottom 0s,
+    }
+    .fixBox-show {
+        animation-delay: 1s;
+    }
+    .map-weather {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(255, 255, 255, 0.7);
+        color: #655f5f;
+        padding: 3px 10px;
+        border-radius: 5px;
+        box-shadow: 1px 2px 4px rgba(0, 0, 0, .7);
+        .fa-spinner {
+            margin-right: 5px;
+        }
+        .fa-close {
+            margin-left: 5px;
+        }
     }
 }
 </style>

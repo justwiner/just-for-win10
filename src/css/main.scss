@@ -63,6 +63,37 @@ input {
     }
 }
 
+.fixBox-show {
+    animation-name: fixBox-show;
+    animation-duration: .3s;
+    animation-fill-mode: forwards;
+    transform: translateX(250%);
+}
+
+@keyframes fixBox-show {
+    0% {
+        transform: translateX(250%);
+    }
+    100% {
+        transform: translateX(0%);
+    }
+}
+
+.fixbox-hidden {
+    animation-name: fixBox-hidden;
+    animation-duration: .3s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes fixBox-hidden {
+    0% {
+        transform: translateX(0%);
+    }
+    100% {
+        transform: translateX(250%);
+    }
+}
+
 .touch-item {
     &:hover {
         background-color: rgba(54, 52, 53, .8);

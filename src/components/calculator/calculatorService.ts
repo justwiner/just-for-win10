@@ -6,12 +6,12 @@ interface CalculatorV {
     preInput: string;
     inputKey: string;
     preOptStr: string;
-    calculate: calculate;
+    calculate: Calculate;
     records: Record[];
 }
 
-interface calculate {
-    ifCalculate: Boolean;
+interface Calculate {
+    ifCalculate: boolean;
     optStr: string;
 }
 
@@ -35,18 +35,14 @@ class CalculatorService {
                 if (this.checkIfEmptyInput(context.curInput)) { return; }
                 context.curInput = (+context.curInput * 100).toString();
             },
-            calculateFn: () => {
-
-            },
+            calculateFn: () => {return; },
         },
         '√': {
             clickFn: (context: CalculatorV) => {
                 if (this.checkIfEmptyInput(context.curInput)) { return; }
                 context.curInput = Math.sqrt(+context.curInput).toString();
             },
-            calculateFn: () => {
-
-            },
+            calculateFn: () => {return; },
         },
         'X²': {
             clickFn: (context: CalculatorV) => {
@@ -60,9 +56,7 @@ class CalculatorService {
                     };
                 }
             },
-            calculateFn: () => {
-
-            },
+            calculateFn: () => {return; },
         },
         '1/X': {
             clickFn: (context: CalculatorV) => {
@@ -70,9 +64,7 @@ class CalculatorService {
                 if (+context.curInput === 0) { return; }
                 context.curInput = (1 / +context.curInput).toString();
             },
-            calculateFn: () => {
-
-            },
+            calculateFn: () => {return; },
         },
         'CE': {
             clickFn: (context: CalculatorV) => {
@@ -161,7 +153,7 @@ class CalculatorService {
             },
         },
     };
-    public checkIfEmptyInput(curInput: string): Boolean {
+    public checkIfEmptyInput(curInput: string): boolean {
         return (curInput === '');
     }
     public input(inputKey: string, context: CalculatorV) {

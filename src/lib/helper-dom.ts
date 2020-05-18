@@ -1,11 +1,15 @@
-function mouseMove(callBack: Function, endCallBack: Function) {
+function mouseMove(callBack: (e: Event) => {}, endCallBack: (e: Event) => {}) {
     document.onmousemove = (e) => {
-        callBack && callBack(e);
+        if (callBack) {
+            callBack(e);
+        }
     };
     document.onmouseup = (e) => {
         document.onmousemove = null;
         document.onmouseup = null;
-        endCallBack && endCallBack(e);
+        if (endCallBack) {
+            endCallBack(e);
+        }
     };
 }
 

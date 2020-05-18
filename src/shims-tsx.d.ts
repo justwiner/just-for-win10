@@ -10,4 +10,15 @@ declare global {
       [elem: string]: any;
     }
   }
+  interface Document {
+    mozFullScreenEnabled: any,
+    webkitFullscreenEnabled: any,
+    msFullscreenEnabled: any,
+    mozCancelFullScreen: any,
+    webkitCancelFullScreen: any,
+  }
+  interface HTMLElement {
+    mozRequestFullScreen: any,
+    webkitRequestFullScreen: any
+  }
 }

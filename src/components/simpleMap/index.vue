@@ -20,6 +20,39 @@
             <span>{{weatherStatus}}</span>
             <i class="fa fa-close" @click="closeWeatherBox"></i>
         </div>
+        <el-card class="map-opt">
+            <section class="map-opt-title">气候温度可视化</section>
+            <section class="map-opt-item">
+                <el-tooltip effect="light" content="请输入区域拼音，例如：zhejiang/chongqing" placement="top">
+                    <label>查询区域：</label>
+                </el-tooltip>
+                <section class="map-opt-item-form">
+                    <el-input size="mini" v-model="areaName" placeholder="请输入区域名称">
+                        <el-button @click="getWetherData" slot="append" icon="el-icon-search"></el-button>
+                    </el-input>
+                </section>
+            </section>
+            <section class="map-opt-item">
+                <label>天气：</label>
+                <section class="map-opt-item-form">
+                    <el-switch
+                        v-model="weatherVisible"
+                        active-color="#13ce66"
+                        inactive-color="#ff4949">
+                    </el-switch>
+                </section>
+            </section>
+            <section class="map-opt-item">
+                <label>温度：</label>
+                <section class="map-opt-item-form">
+                    <el-switch
+                        v-model="temperatureVisible"
+                        active-color="#13ce66"
+                        inactive-color="#ff4949">
+                    </el-switch>
+                </section>
+            </section>
+        </el-card>
     </section>
 </template>
 
@@ -33,13 +66,39 @@ export default {
             id: Date.now(),
             map: null,
             weatherLayer: null,
+            temperatureLayer: null,
             width: 0,
             height: 0,
             layerVisible: false,
             mapLoad: false,
             service: null,
             weatherStatus: '',
-            weatherLoading: false
+            weatherLoading: false,
+            weatherVisible: true,
+            temperatureVisible: true,
+            areaName: 'china',
+            infoWindow: null,
+
+            windowDic: {
+                'temperatureLayer': this.temWindow,
+                'weatherLayer': this.weatherWindow
+            }
+        }
+    },
+    watch: {
+        weatherVisible (val) {
+            if (val) {
+                this.weatherLayer.show()
+            } else {
+                this.weatherLayer.hide()
+            }
+        },
+        temperatureVisible (val) {
+            if (val) {
+                this.temperatureLayer.show()
+            } else {
+                this.temperatureLayer.hide()
+            }
         }
     },
     mounted () {
@@ -57,10 +116,16 @@ export default {
             })
             this.map.plugin(['AMap.DistrictSearch', 'Map3D'], () => {
                 this.weatherLayer = new AMap.Object3DLayer({ zIndex: 110, opacity: 1 });
+                this.temperatureLayer = new AMap.Object3DLayer({ zIndex: 109, opacity: 1 });
                 this.map.add(this.weatherLayer)
+                this.map.add(this.temperatureLayer)
             })
-            this.service = new MapService(this.map, this)
+            this.service = new MapService(this.map, this, this.areaName)
             this.map.on('complete', this.mapComplete)
+            this.map.on('mousemove', this.mapMouseMove)
+            this.infoWindow = new AMap.InfoWindow({
+                content: ''
+            });
         }, 500)
     },
     beforeDestroy() {
@@ -84,13 +149,58 @@ export default {
             }, 500)
         },
         mapComplete () {
+            this.service.renderWeather(this.areaName)
+            this.service.renderTemperature()
+        },
+        async getWetherData () {
+            await this.service.getWeather(this.areaName)
             this.service.renderWeather()
+            this.service.renderTemperature()
         },
         closeWeatherBox () {
             this.$refs.weatherBox.className = 'map-weather fixbox-hidden'
             setTimeout(() => {
                 this.weatherLoading = false
             }, 400)
+        },
+        weatherWindow (data) {
+            return '1'
+        },
+        temWindow (data) {
+            return '2'
+        },
+        mapMouseMove (event) {
+            const pixel = event.pixel;
+            const px = new AMap.Pixel(pixel.x, pixel.y);
+            /**
+             * 拾取鼠标所在位置的3D对象
+             */
+            const obj = this.map.getObject3DByContainerPos(px, [
+                this.weatherLayer,
+                this.temperatureLayer
+            ], false) || {};
+            if (!obj.index) {
+                this.infoWindow.close()
+                return
+            }
+            // 选中的 3d对象所在的索引
+            const index = obj.index;
+            // 选中的 object3D 对象，这里为当前 Mesh
+            const object = obj.object;
+            let data = null
+            if (object.data instanceof Array) {
+                data = object.data[index]
+            } else if (object.data) {
+                data = object.data
+            }
+            if (!data) return
+            let content = this.windowDic[data.layer](data)
+            this.infoWindow.setContent(content)
+            if (!this.infoWindow.getIsOpen()) {
+                this.infoWindow.open(this.map, event.lnglat)
+            } else {
+                this.infoWindow.setPosition(event.lnglat)
+            }
         }
     }
 }
@@ -126,11 +236,38 @@ export default {
         padding: 3px 10px;
         border-radius: 5px;
         box-shadow: 1px 2px 4px rgba(0, 0, 0, .7);
+        z-index: 1000;
         .fa-spinner {
             margin-right: 5px;
         }
         .fa-close {
             margin-left: 5px;
+        }
+    }
+    .map-opt {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        .map-opt-item {
+            display: flex;
+            align-items: center;
+            font-size: .7em;
+            margin-bottom: 10px;
+            padding-left: 13px;
+            label {
+                margin-right: 10px;
+                width: 70px;
+            }
+            .map-opt-item-form {
+                width: calc(100% - 80px);
+            }
+        }
+        .map-opt-title {
+            border-left: 3px solid #409eff;
+            padding-left: 10px;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            font-size: .8em;
         }
     }
 }

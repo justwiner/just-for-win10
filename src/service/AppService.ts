@@ -1,7 +1,7 @@
 import {App} from './class/app';
 
 class AppService {
-    public checkAppRun(runingApps: App[], app: App): Boolean {
+    public checkAppRun(runingApps: App[], app: App): boolean {
         const hitApp = runingApps.find((item) => item.id === app.id);
         return hitApp ? true : false;
     }

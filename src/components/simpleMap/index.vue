@@ -158,16 +158,37 @@ export default {
             this.service.renderTemperature()
         },
         closeWeatherBox () {
-            this.$refs.weatherBox.className = 'map-weather fixbox-hidden'
+            if (this.$refs.weatherBox) {
+                this.$refs.weatherBox.className = 'map-weather fixbox-hidden'
+            }
             setTimeout(() => {
                 this.weatherLoading = false
             }, 400)
         },
         weatherWindow (data) {
-            return '1'
+            let divStr = `
+            <div class='map-info-item'>城市：${data.cityname}</div>
+            <div class='map-info-item'>天气：${data.stateDetailed}</div>
+            `
+            if (data.humidity) {
+                divStr += `<div class='map-info-item'>空气质量：${data.humidity}</div>`
+            }
+            if (data.time) {
+                divStr += `<div class='map-info-item'>数据更新时间：${data.time}</div>`
+            }
+            divStr += `<div class='map-info-item'>风向：${data.windState}</div>`
+            return divStr
         },
         temWindow (data) {
-            return '2'
+            let divStr = `
+            <div class='map-info-item'>城市：${data.cityname}</div>
+            <div class='map-info-item'>最低温度：${data.tem2}℃</div>
+            <div class='map-info-item'>最高温度：${data.tem1}℃</div>
+            `
+            if (data.temNow) {
+                divStr += `<div class='map-info-item'>当前温度：${data.temNow}℃</div>`
+            }
+            return divStr
         },
         mapMouseMove (event) {
             const pixel = event.pixel;
@@ -269,6 +290,9 @@ export default {
             letter-spacing: 1px;
             font-size: .8em;
         }
+    }
+    .map-info-item {
+        font-size: .7em;
     }
 }
 </style>

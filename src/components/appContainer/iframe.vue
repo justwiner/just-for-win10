@@ -57,6 +57,8 @@ export default {
         Calculator: () => import('@/components/calculator/index'),
         ColorPick: () => import('@/components/colorPick/index'),
         SimpleMap: () => import('@/components/simpleMap/index'),
+        ToolBox: () => import('@/components/toolBox/index'),
+        Animates: () => import('@/components/animate/index')
     },
     computed: {
         ...mapState({

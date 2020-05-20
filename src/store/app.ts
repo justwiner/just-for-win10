@@ -4,7 +4,7 @@ const apps = [
         type: 'iframe',
         url: 'https://www.winerlu.com/',
         icon: require('../assets/icon/blog.png'),
-        defaultSize: ['50%', '50%'],
+        defaultSize: ['90%', '80%'],
         id: 1,
     },
     {
@@ -12,7 +12,7 @@ const apps = [
         type: 'iframe',
         url: 'https://www.messcli.cn/',
         icon: require('../assets/icon/mess-cli.png'),
-        defaultSize: ['50%', '50%'],
+        defaultSize: ['90%', '80%'],
         id: 2,
     },
     {
@@ -20,7 +20,7 @@ const apps = [
         type: 'iframe',
         url: 'https://demo.messcli.cn/',
         icon: require('../assets/icon/mess-demo.png'),
-        defaultSize: ['50%', '50%'],
+        defaultSize: ['90%', '80%'],
         id: 3,
     },
     {
@@ -40,12 +40,28 @@ const apps = [
         id: 5,
     },
     {
-        name: '地图',
+        name: '全国天气温度',
         type: 'app',
         icon: require('../assets/icon/map.svg'),
         component: 'simpleMap',
         defaultSize: ['50%', '80%'],
         id: 6,
+    },
+    {
+        name: '工具箱',
+        type: 'app',
+        icon: require('../assets/icon/toolBox.svg'),
+        component: 'toolBox',
+        defaultSize: ['80%', '80%'],
+        id: 7,
+    },
+    {
+        name: '简单的动画',
+        type: 'app',
+        icon: require('../assets/icon/animate.svg'),
+        component: 'animates',
+        defaultSize: ['80%', '80%'],
+        id: 8,
     },
 ];
 

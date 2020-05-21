@@ -60,7 +60,7 @@ const apps = [
         type: 'app',
         icon: require('../assets/icon/animate.svg'),
         component: 'animates',
-        defaultSize: ['80%', '80%'],
+        defaultSize: ['100%', '100%'],
         id: 8,
     },
 ];

@@ -85,7 +85,7 @@ class AMapWind {
         }
     }
     public initVisibleStyle() {
-        const style = document.createElement('style');
+        const style: any = document.createElement('style');
         style.type = 'text/css';
         style.id = 'amap-wind-css';
         try {

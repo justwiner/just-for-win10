@@ -1,4 +1,7 @@
-import {getWeather} from './api';
+import {
+    getWeather,
+} from './api';
+import WindLayer from '@/lib/amap-wind';
 
 const TEMCOLOR: {
     [key: string]: number[],
@@ -17,11 +20,11 @@ export default class MapService {
     public weatherIcon: any = {};
     public weatherData: any[];
     public areaName: string;
+    public wind: any;
     constructor(map: any, context: any, areaName: string) {
         this.map = map;
         this.context = context;
-        this.weatherIcon = [
-            {
+        this.weatherIcon = [{
                 type: 0, // 晴
                 url: require('@/assets/map/weather/0.png'),
             },
@@ -73,7 +76,7 @@ export default class MapService {
      * 获取天气温度数据
      * @param areaName
      */
-    public getWeather(areaName?: string) {
+    public getWeather(areaName ?: string) {
         this.context.weatherStatus = '正在加载天气数据...';
         this.context.weatherLoading = true;
         if (areaName) {
@@ -163,7 +166,8 @@ export default class MapService {
             /**
              * 设置纹理索引
              */
-            const textureIndex  = this.weatherIcon.findIndex((icon: any) => icon.type === +item.state2);
+            let textureIndex = this.weatherIcon.findIndex((icon: any) => icon.type === +item.state2);
+            if (textureIndex >= 8) {textureIndex = 7;}
             geometry.textureIndices.push(textureIndex > -1 ? textureIndex : 0);
         });
         this.context.weatherLayer.add(points3D);
@@ -247,12 +251,12 @@ export default class MapService {
         radius: number,
         topColor: number[],
         bottomColor: number[] = [1, 1, 1, 1],
-        ) {
-            const cylinder = new AMap.Object3D.Mesh();
-            const geometry = cylinder.geometry;
-            const verticesLength = segment * 2;
-            const path = [];
-            for (let i = 0; i < segment; i += 1) {
+    ) {
+        const cylinder = new AMap.Object3D.Mesh();
+        const geometry = cylinder.geometry;
+        const verticesLength = segment * 2;
+        const path = [];
+        for (let i = 0; i < segment; i += 1) {
             const angle = 2 * Math.PI * i / segment;
             const x = center.x + Math.cos(angle) * radius;
             const y = center.y + Math.sin(angle) * radius;
@@ -273,19 +277,57 @@ export default class MapService {
         }
 
         // 构建顶面三角形
-            for (let i = 0; i < segment; i += 1) {
+        for (let i = 0; i < segment; i += 1) {
             geometry.vertices.push.apply(geometry.vertices, geometry.vertices.slice(i * 6 + 3, i * 6 + 6)); // 底部顶点
             geometry.vertexColors.push.apply(geometry.vertexColors, topColor);
         }
 
-            const triangles = AMap.GeometryUtil.triangulateShape(path);
-            const offset = segment * 2;
+        const triangles = AMap.GeometryUtil.triangulateShape(path);
+        const offset = segment * 2;
 
-            for (let v = 0; v < triangles.length; v += 3) {
+        for (let v = 0; v < triangles.length; v += 3) {
             geometry.faces.push(triangles[v] + offset, triangles[v + 2] + offset, triangles[v + 1] + offset);
         }
 
-            cylinder.transparent = true; // 如果使用了透明颜色，请设置true
-            return cylinder;
+        cylinder.transparent = true; // 如果使用了透明颜色，请设置true
+        return cylinder;
+    }
+    /**
+     * 渲染风场图层
+     */
+    public async renderWindLayer() {
+        fetch('https://sakitam-fdd.github.io/wind-layer/data/wind.json')
+            .then((res) => res.json())
+            .then((res) => {
+                this.context.windLayer = new WindLayer(res, {
+                    zIndex: 20,
+                    velocityScale: 1 / 30,
+                    paths: 1000,
+                    minVelocity: 0, // 粒子强度最小的速度 (m/s)
+                    maxVelocity: 10, // 粒子强度最大的速度 (m/s)
+                    particleAge: 90, // 重绘之前生成的离子数量的最大帧数
+                    lineWidth: 1, // 绘制粒子的线宽
+                    particleMultiplier: 5, // 粒子数量
+                    windOptions: {
+                        colorScale: [
+                            '#a8071a',
+                            '#871400',
+                            '#873800',
+                            '#874d00',
+                            '#876800',
+                            '#3f6600',
+                            '#135200',
+                            '#00474f',
+                            '#003a8c',
+                            '#780650',
+                        ],
+                        frameRate: 16,
+                        maxAge: 60,
+                        globalAlpha: 0.9,
+                        generateParticleOption: true,
+                    },
+                });
+                this.context.windLayer.appendTo(this.map);
+            });
     }
 }

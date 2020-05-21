@@ -50,13 +50,20 @@
 import {TweenMax, Power4} from 'gsap'
 import {mouseMove} from '@/lib/helper-dom'
 import {mapState} from 'vuex'
+import Calculator from '@/components/calculator/index'
+import ColorPick from '@/components/colorPick/index'
+import SimpleMap from '@/components/simpleMap/index'
+import ToolBox from '@/components/toolBox/index'
+import Animates from '@/components/animate/index'
 
 export default {
     name: 'app-container-iframe',
     components: {
-        Calculator: () => import('@/components/calculator/index'),
-        ColorPick: () => import('@/components/colorPick/index'),
-        SimpleMap: () => import('@/components/simpleMap/index'),
+        Calculator,
+        ColorPick,
+        SimpleMap,
+        ToolBox,
+        Animates
     },
     computed: {
         ...mapState({
@@ -104,8 +111,8 @@ export default {
                 if (this.app.defaultSize) {
                     this.$el.style.left = (document.body.offsetWidth/100) * (100 - parseInt(this.app.defaultSize[0]))/2 + 'px'
                     this.$el.style.top = ((document.body.offsetHeight - 40)/100) * (100 - parseInt(this.app.defaultSize[1]))/2 + 'px'
-                    this.$el.style.width = this.app.defaultSize[0]
-                    this.$el.style.height = this.app.defaultSize[1]
+                    this.$el.style.width = this.parseNum(this.app.defaultSize[0], document.body.offsetWidth) + 'px'
+                    this.$el.style.height = this.parseNum(this.app.defaultSize[1], document.body.offsetHeight - 40) + 'px'
                     this.prePosition = [
                         parseInt(this.$el.style.left),
                         parseInt(this.$el.style.top)

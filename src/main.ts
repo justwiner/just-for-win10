@@ -6,6 +6,7 @@ import eventBus from './lib/bus';
 import './components/base/index';
 import './css/index.scss';
 import './lib/Directive/index';
+import './lib/custom-polify';
 
 Vue.config.productionTip = false;
 

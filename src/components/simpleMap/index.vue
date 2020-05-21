@@ -52,6 +52,17 @@
                     </el-switch>
                 </section>
             </section>
+            <section v-if="false" class="map-opt-title">全球风场可视化</section>
+            <section v-if="false" class="map-opt-item">
+                <label>风场：</label>
+                <section class="map-opt-item-form">
+                    <el-switch
+                        v-model="windVisible"
+                        active-color="#13ce66"
+                        inactive-color="#ff4949">
+                    </el-switch>
+                </section>
+            </section>
         </el-card>
     </section>
 </template>
@@ -65,8 +76,6 @@ export default {
         return {
             id: Date.now(),
             map: null,
-            weatherLayer: null,
-            temperatureLayer: null,
             width: 0,
             height: 0,
             layerVisible: false,
@@ -74,14 +83,18 @@ export default {
             service: null,
             weatherStatus: '',
             weatherLoading: false,
+            weatherLayer: null,
+            temperatureLayer: null,
+            windLayer: null,
             weatherVisible: true,
             temperatureVisible: true,
+            windVisible: true,
             areaName: 'china',
             infoWindow: null,
-
             windowDic: {
                 'temperatureLayer': this.temWindow,
-                'weatherLayer': this.weatherWindow
+                'weatherLayer': this.weatherWindow,
+                'windLayer': this.windWindow
             }
         }
     },
@@ -99,6 +112,13 @@ export default {
             } else {
                 this.temperatureLayer.hide()
             }
+        },
+        windVisible (val) {
+            if (val) {
+                this.windLayer.show()
+            } else {
+                this.windLayer.hide()
+            }
         }
     },
     mounted () {
@@ -107,6 +127,14 @@ export default {
             this.height = this.$refs.simpleMap.clientHeight
         }, 300)
         setTimeout(() => {
+            this.initMap()
+        }, 500)
+    },
+    beforeDestroy() {
+        this.map && this.map.destroy()
+    },
+    methods: {
+        initMap () {
             this.map = new AMap.Map(`map-${this.id}`, {
                 viewMode: '3D',
                 pitch: 60,
@@ -114,11 +142,15 @@ export default {
                 zoom: 7,
                 zooms: [3, 20],
             })
-            this.map.plugin(['AMap.DistrictSearch', 'Map3D'], () => {
+            this.map.plugin(['Map3D'], () => {
                 this.weatherLayer = new AMap.Object3DLayer({ zIndex: 110, opacity: 1 });
                 this.temperatureLayer = new AMap.Object3DLayer({ zIndex: 109, opacity: 1 });
                 this.map.add(this.weatherLayer)
                 this.map.add(this.temperatureLayer)
+                window.map = this.map
+            })
+            this.map.plugin(['AMap.ControlBar'], () => {
+                this.map.addControl(new AMap.ControlBar());
             })
             this.service = new MapService(this.map, this, this.areaName)
             this.map.on('complete', this.mapComplete)
@@ -126,13 +158,8 @@ export default {
             this.infoWindow = new AMap.InfoWindow({
                 content: ''
             });
-        }, 500)
-    },
-    beforeDestroy() {
-        this.map && this.map.destroy()
-    },
-    methods: {
-        sizeChange(opt) {
+        },
+        sizeChange (opt) {
             this.mapLoad = true
             this.layerVisible = true
             this.$refs.mapLayer.className = 'simple-map-layer'
@@ -148,9 +175,11 @@ export default {
                 }, 500)
             }, 500)
         },
-        mapComplete () {
+        async mapComplete () {
+            await this.service.getWeather(this.areaName)
             this.service.renderWeather(this.areaName)
             this.service.renderTemperature()
+            // this.service.renderWindLayer()
         },
         async getWetherData () {
             await this.service.getWeather(this.areaName)
@@ -158,16 +187,40 @@ export default {
             this.service.renderTemperature()
         },
         closeWeatherBox () {
-            this.$refs.weatherBox.className = 'map-weather fixbox-hidden'
+            if (this.$refs.weatherBox) {
+                this.$refs.weatherBox.className = 'map-weather fixbox-hidden'
+            }
             setTimeout(() => {
                 this.weatherLoading = false
             }, 400)
         },
         weatherWindow (data) {
-            return '1'
+            let divStr = `
+            <div class='map-info-item'>城市：${data.cityname}</div>
+            <div class='map-info-item'>天气：${data.stateDetailed}</div>
+            `
+            if (data.humidity) {
+                divStr += `<div class='map-info-item'>空气质量：${data.humidity}</div>`
+            }
+            if (data.time) {
+                divStr += `<div class='map-info-item'>数据更新时间：${data.time}</div>`
+            }
+            divStr += `<div class='map-info-item'>风向：${data.windState}</div>`
+            return divStr
         },
         temWindow (data) {
-            return '2'
+            let divStr = `
+            <div class='map-info-item'>城市：${data.cityname}</div>
+            <div class='map-info-item'>最低温度：${data.tem2}℃</div>
+            <div class='map-info-item'>最高温度：${data.tem1}℃</div>
+            `
+            if (data.temNow) {
+                divStr += `<div class='map-info-item'>当前温度：${data.temNow}℃</div>`
+            }
+            return divStr
+        },
+        windWindow (data) {
+            return '1'
         },
         mapMouseMove (event) {
             const pixel = event.pixel;
@@ -201,7 +254,7 @@ export default {
             } else {
                 this.infoWindow.setPosition(event.lnglat)
             }
-        }
+        },
     }
 }
 </script>
@@ -246,7 +299,7 @@ export default {
     }
     .map-opt {
         position: absolute;
-        right: 10px;
+        left: 10px;
         top: 10px;
         .map-opt-item {
             display: flex;
@@ -269,6 +322,9 @@ export default {
             letter-spacing: 1px;
             font-size: .8em;
         }
+    }
+    .map-info-item {
+        font-size: .7em;
     }
 }
 </style>

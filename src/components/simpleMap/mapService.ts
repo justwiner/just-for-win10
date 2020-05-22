@@ -1,7 +1,7 @@
 import {
     getWeather,
 } from './api';
-import WindLayer from '@/lib/amap-wind';
+// import WindLayer from '@/lib/amap-wind';
 
 const TEMCOLOR: {
     [key: string]: number[],
@@ -167,7 +167,7 @@ export default class MapService {
              * 设置纹理索引
              */
             let textureIndex = this.weatherIcon.findIndex((icon: any) => icon.type === +item.state2);
-            if (textureIndex >= 8) {textureIndex = 7;}
+            if (textureIndex >= 8) {textureIndex = 7; }
             geometry.textureIndices.push(textureIndex > -1 ? textureIndex : 0);
         });
         this.context.weatherLayer.add(points3D);
@@ -295,39 +295,39 @@ export default class MapService {
     /**
      * 渲染风场图层
      */
-    public async renderWindLayer() {
-        fetch('https://sakitam-fdd.github.io/wind-layer/data/wind.json')
-            .then((res) => res.json())
-            .then((res) => {
-                this.context.windLayer = new WindLayer(res, {
-                    zIndex: 20,
-                    velocityScale: 1 / 30,
-                    paths: 1000,
-                    minVelocity: 0, // 粒子强度最小的速度 (m/s)
-                    maxVelocity: 10, // 粒子强度最大的速度 (m/s)
-                    particleAge: 90, // 重绘之前生成的离子数量的最大帧数
-                    lineWidth: 1, // 绘制粒子的线宽
-                    particleMultiplier: 5, // 粒子数量
-                    windOptions: {
-                        colorScale: [
-                            '#a8071a',
-                            '#871400',
-                            '#873800',
-                            '#874d00',
-                            '#876800',
-                            '#3f6600',
-                            '#135200',
-                            '#00474f',
-                            '#003a8c',
-                            '#780650',
-                        ],
-                        frameRate: 16,
-                        maxAge: 60,
-                        globalAlpha: 0.9,
-                        generateParticleOption: true,
-                    },
-                });
-                this.context.windLayer.appendTo(this.map);
-            });
-    }
+    // public async renderWindLayer() {
+    //     fetch('https://sakitam-fdd.github.io/wind-layer/data/wind.json')
+    //         .then((res) => res.json())
+    //         .then((res) => {
+    //             this.context.windLayer = new WindLayer(res, {
+    //                 zIndex: 20,
+    //                 velocityScale: 1 / 30,
+    //                 paths: 1000,
+    //                 minVelocity: 0, // 粒子强度最小的速度 (m/s)
+    //                 maxVelocity: 10, // 粒子强度最大的速度 (m/s)
+    //                 particleAge: 90, // 重绘之前生成的离子数量的最大帧数
+    //                 lineWidth: 1, // 绘制粒子的线宽
+    //                 particleMultiplier: 5, // 粒子数量
+    //                 windOptions: {
+    //                     colorScale: [
+    //                         '#a8071a',
+    //                         '#871400',
+    //                         '#873800',
+    //                         '#874d00',
+    //                         '#876800',
+    //                         '#3f6600',
+    //                         '#135200',
+    //                         '#00474f',
+    //                         '#003a8c',
+    //                         '#780650',
+    //                     ],
+    //                     frameRate: 16,
+    //                     maxAge: 60,
+    //                     globalAlpha: 0.9,
+    //                     generateParticleOption: true,
+    //                 },
+    //             });
+    //             this.context.windLayer.appendTo(this.map);
+    //         });
+    // }
 }

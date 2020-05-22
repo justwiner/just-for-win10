@@ -94,6 +94,32 @@ input {
     }
 }
 
+.loading-layer {
+    animation-name: loading-layer;
+    animation-duration: 1s;
+    animation-fill-mode: forwards;
+    background: black;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 5000;
+}
+
+@keyframes loading-layer {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        display: none;
+    }
+}
+
 .touch-item {
     &:hover {
         background-color: rgba(54, 52, 53, .8);

@@ -35,9 +35,9 @@ function fullScreenFun() {
 
 function fullScreenable(): any {
     return document.fullscreenEnabled ||
-    document.mozFullScreenEnabled ||
-    document.webkitFullscreenEnabled ||
-    document.msFullscreenEnabled;
+        document.mozFullScreenEnabled ||
+        document.webkitFullscreenEnabled ||
+        document.msFullscreenEnabled;
 }
 
 /**
@@ -48,7 +48,9 @@ function fullScreenable(): any {
 function debounce(fn: () => void, wait: number): () => void {
     let timeout: any = null;
     return () => {
-        if (timeout !== null) { clearTimeout(timeout); }
+        if (timeout !== null) {
+            clearTimeout(timeout);
+        }
         timeout = setTimeout(fn, wait);
     };
 }
@@ -63,10 +65,43 @@ function trimStart(str: string, hitStr: string) {
 
 const isCancel = axios.isCancel;
 
+function iflogin() {
+    const user = sessionStorage.getItem('vbvb');
+    if (user === 'wbwb') {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function login() {
+    sessionStorage.setItem('vbvb', 'wbwb');
+}
+
+function ifPC() {
+    // 平台、设备和操作系统
+    const system = {
+        win: false,
+        mac: false,
+        xll: false,
+        ipad: false,
+    };
+    // 检测平台
+    const p = navigator.platform;
+    system.win = p.indexOf('Win') === 0;
+    system.mac = p.indexOf('Mac') === 0;
+    system.xll = (p === 'Xll') || (p.indexOf('Linux') === 0);
+    system.ipad = (navigator.userAgent.match(/iPad/i) != null) ? true : false;
+    return (system.win || system.mac || system.xll || system.ipad);
+}
+
 export {
     fullScreenFun,
     fullScreenable,
     debounce,
     trimStart,
     isCancel,
+    iflogin,
+    login,
+    ifPC,
 };

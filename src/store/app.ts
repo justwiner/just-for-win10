@@ -1,5 +1,13 @@
 const apps = [
     {
+        name: '简历',
+        type: 'iframe',
+        url: 'https://me.winerlu.com/',
+        icon: require('../assets/icon/luyuwen.svg'),
+        defaultSize: ['90%', '80%'],
+        id: Math.random(),
+    },
+    {
         name: '个人博客',
         type: 'iframe',
         url: 'https://www.winerlu.com/',
@@ -47,14 +55,14 @@ const apps = [
         defaultSize: ['50%', '80%'],
         id: 6,
     },
-    {
-        name: '工具箱',
-        type: 'app',
-        icon: require('../assets/icon/toolBox.svg'),
-        component: 'toolBox',
-        defaultSize: ['80%', '80%'],
-        id: 7,
-    },
+    // {
+    //     name: '工具箱',
+    //     type: 'app',
+    //     icon: require('../assets/icon/toolBox.svg'),
+    //     component: 'toolBox',
+    //     defaultSize: ['80%', '80%'],
+    //     id: 7,
+    // },
     {
         name: '简单的动画',
         type: 'app',

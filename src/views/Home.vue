@@ -6,6 +6,7 @@
       <img src="../assets/coolbg/2.jpg" id="bgCool" >
       <canvas :width="clientWidth" :height="clientHeight"></canvas>
     </section>
+    <just-load />
   </div>
 </template>
 
@@ -13,12 +14,26 @@
 import TaskBar from '@/components/taskbar/taskbar'
 import Desktop from '@/components/desktop/index'
 import cloudsImg from '@/assets/coolbg/clouds.jpg'
+import {iflogin, ifPC} from '@/lib/tools'
 
 export default {
   name: 'Home',
   components: {
     TaskBar,
     Desktop,
+  },
+  created () {
+    if (!ifPC()) {
+        this.$router.push({
+          name: 'notPC'
+        })
+        return
+      }
+    if (!iflogin()) {
+      this.$router.push({
+        name: 'Login'
+      })
+    }
   },
   mounted () {
     this.initCoolBg()

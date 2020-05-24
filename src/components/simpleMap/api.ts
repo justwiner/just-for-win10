@@ -1,6 +1,6 @@
 import http from '@/lib/http-helper';
 
-const baseUrl = 'http://localhost:3000/proxy-api/weather';
+const baseUrl = 'https://proxy.winerlu.com/weather';
 
 function getWeather(cityName?: string) {
     return http.post(`${baseUrl}`, {

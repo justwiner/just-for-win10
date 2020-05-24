@@ -23,15 +23,17 @@
                 <section class="login-content-but" @click="login">登录</section>
             </section>
         </section>
+        <just-load />
     </section>
 </template>
 
 <script>
 import LoginService from '@/service/Login';
 import {getWeek} from '@/lib/date';
-import {fullScreenFun, fullScreenable} from '@/lib/tools';
+import {fullScreenFun, fullScreenable, login} from '@/lib/tools';
 import {mapState} from 'vuex';
 import {TweenMax, Power4} from 'gsap';
+import {ifPC} from '@/lib/tools';
 import moment from 'moment';
 
 export default {
@@ -59,6 +61,14 @@ export default {
             handler (time) {
                 this.setTime(time);
             },
+        }
+    },
+    created () {
+        if (!ifPC()) {
+            this.$router.push({
+                name: 'notPC'
+            })
+            return
         }
     },
     mounted() {
@@ -119,6 +129,7 @@ export default {
             this.week = getWeek(current);
         },
         login() {
+            login()
             this.$router.push({
                 name: 'Home',
             })

@@ -14,6 +14,11 @@ const routes: RouteConfig[] = [
     name: 'Home',
     component: () => import('../views/Home.vue'),
   },
+  {
+    path: '/notPC',
+    name: 'notPC',
+    component: () => import('../views/NotPC.vue'),
+  },
 ];
 
 const router = new VueRouter({

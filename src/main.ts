@@ -8,6 +8,8 @@ import './css/index.scss';
 import './lib/Directive/index';
 import './lib/custom-polify';
 
+import './lib/deps-helper.js';
+
 Vue.config.productionTip = false;
 
 Vue.prototype.bus = eventBus;

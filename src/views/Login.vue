@@ -65,9 +65,10 @@ export default {
     },
     created () {
         if (!ifPC()) {
-            this.$router.push({
-                name: 'notPC'
-            })
+            // this.$router.push({
+            //     name: 'notPC'
+            // })
+            window.location.href = '/notPC'
             return
         }
     },
@@ -130,9 +131,10 @@ export default {
         },
         login() {
             login()
-            this.$router.push({
-                name: 'Home',
-            })
+            // this.$router.push({
+            //     name: 'Home',
+            // })
+            window.location.href = '/'
         },
     },
 };

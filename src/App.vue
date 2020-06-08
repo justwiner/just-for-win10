@@ -23,7 +23,7 @@ export default {
 </script>
 
 <style>
-#app {
+#app, #win10_portal {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   width: 100%;
   height: 100%;

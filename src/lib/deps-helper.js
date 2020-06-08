@@ -3,11 +3,12 @@ const deps = [
     'https://assets.winerlu.com/openjs/SplitText.min.js',
     'https://assets.winerlu.com/openjs/canvasSlideshow.js',
     'https://assets.winerlu.com/openjs/pixi.min.js',
-    'https://assets.winerlu.com/openjs/TweenMax.min.js'
+    'https://assets.winerlu.com/openjs/TweenMax.min.js',
 ]
 
 deps.forEach(item => {
     const script = document.createElement('script')
     script.src = item
+    script.async = true
     document.head.appendChild(script)
 })

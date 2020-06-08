@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "serve": "vue-cli-service serve --mode dev",
+    "build": "vue-cli-service build --mode prod",
+    "lint": "vue-cli-service lint",
+    "serve:local": "vue-cli-service serve --mode local"
   },
   "dependencies": {
     "@types/crypto-js": "^3.1.46",
@@ -19,6 +20,8 @@
     "moment": "^2.24.0",
     "node-sass": "^4.14.0",
     "sass-loader": "^8.0.2",
+    "single-spa-vue": "^1.8.2",
+    "systemjs-webpack-interop": "^1.1.0",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
     "vue-color": "^2.7.1",
@@ -36,6 +39,7 @@
     "@vue/cli-service": "~4.3.0",
     "babel-plugin-component": "^1.1.1",
     "typescript": "~3.8.3",
+    "vue-cli-plugin-single-spa": "~1.1.2",
     "vue-template-compiler": "^2.6.11"
   }
 }

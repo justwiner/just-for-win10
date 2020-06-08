@@ -24,15 +24,17 @@ export default {
   },
   created () {
     if (!ifPC()) {
-        this.$router.push({
-          name: 'notPC'
-        })
+        // this.$router.push({
+        //   name: 'notPC'
+        // })
+        window.location.href = '/notPC'
         return
       }
     if (!iflogin()) {
-      this.$router.push({
-        name: 'Login'
-      })
+      // this.$router.push({
+      //   name: 'Login'
+      // })
+      window.location.href = '/login'
     }
   },
   mounted () {

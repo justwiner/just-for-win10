@@ -75,9 +75,10 @@ export default {
         powerSleep () {
             this.close()
             setTimeout(() => {
-                this.$router.push({
-                    path: '/login'
-                })
+                // this.$router.push({
+                //     path: '/login'
+                // })
+                window.location.href = '/login'
             }, 400)
         },
         runApp (app) {

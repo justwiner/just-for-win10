@@ -55,14 +55,14 @@ const apps = [
         defaultSize: ['50%', '80%'],
         id: 6,
     },
-    // {
-    //     name: '工具箱',
-    //     type: 'app',
-    //     icon: require('../assets/icon/toolBox.svg'),
-    //     component: 'toolBox',
-    //     defaultSize: ['80%', '80%'],
-    //     id: 7,
-    // },
+    {
+        name: '工具箱',
+        type: 'mf',
+        icon: require('../assets/icon/toolBox.svg'),
+        root: 'tool_box',
+        defaultSize: ['80%', '80%'],
+        id: 7,
+    },
     {
         name: '简单的动画',
         type: 'app',

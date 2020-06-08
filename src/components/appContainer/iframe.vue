@@ -33,6 +33,11 @@
             ref="appC"
             v-bind:is="app.component"></component>
         </section>
+        <section
+        @mousedown.stop="() => {}"
+        :id="app.root"
+        v-if="app.type === 'mf'"
+        class="app-content"></section>
 
         <!-- app应用窗口大小调整触发按钮 8个方向 -->
         <section @mousedown.stop="(e) => {sizeChangeS(e, 'top')}" class='app-frame-sizeBut sizeBut-top'></section>

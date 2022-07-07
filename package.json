@@ -17,7 +17,7 @@
     "echarts": "^4.7.0",
     "element-ui": "^2.13.1",
     "gsap": "^3.2.6",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "node-sass": "^4.14.0",
     "sass-loader": "^8.0.2",
     "single-spa-vue": "^1.8.2",
